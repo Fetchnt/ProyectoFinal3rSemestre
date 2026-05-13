@@ -1,8 +1,10 @@
 package co.edu.unbosque.proyectofinal.entity;
 
-import java.util.ArrayList;
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Objects;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -16,24 +18,36 @@ public class Codigo {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
+
 	private String usuarioSolicitud;
-	private String codigoRecibido;
-	private String lenguajeRecidido;
+	private String lenguajeRecibido;
 	private String lenguajeATraducir;
-	private ArrayList<Codigo> inteligenciasUsadas;
+	private String proveedorIA;
+	private boolean exitoso;
+	private LocalDateTime fechaCreacion;
+	@Column(columnDefinition = "TEXT")
+	private String codigoRecibido;
+	@Column(columnDefinition = "TEXT")
+	private String codigoTraducido;
+	private long clienteId;
 
 	public Codigo() {
 		super();
 	}
 
-	public Codigo(String usuarioSolicitud, String codigoRecibido, String lenguajeRecidido, String lenguajeATraducir,
-			ArrayList<Codigo> inteligenciasUsadas) {
+	public Codigo(String usuarioSolicitud, String lenguajeRecibido, String lenguajeATraducir, String proveedorIA,
+			boolean exitoso, LocalDateTime fechaCreacion, String codigoRecibido, String codigoTraducido,
+			List<Codigo> inteligenciasUsadas, long clienteId) {
 		super();
 		this.usuarioSolicitud = usuarioSolicitud;
-		this.codigoRecibido = codigoRecibido;
-		this.lenguajeRecidido = lenguajeRecidido;
+		this.lenguajeRecibido = lenguajeRecibido;
 		this.lenguajeATraducir = lenguajeATraducir;
-		this.inteligenciasUsadas = inteligenciasUsadas;
+		this.proveedorIA = proveedorIA;
+		this.exitoso = exitoso;
+		this.fechaCreacion = fechaCreacion;
+		this.codigoRecibido = codigoRecibido;
+		this.codigoTraducido = codigoTraducido;
+		this.clienteId = clienteId;
 	}
 
 	public long getId() {
@@ -52,20 +66,12 @@ public class Codigo {
 		this.usuarioSolicitud = usuarioSolicitud;
 	}
 
-	public String getCodigoRecibido() {
-		return codigoRecibido;
+	public String getLenguajeRecibido() {
+		return lenguajeRecibido;
 	}
 
-	public void setCodigoRecibido(String codigoRecibido) {
-		this.codigoRecibido = codigoRecibido;
-	}
-
-	public String getLenguajeRecidido() {
-		return lenguajeRecidido;
-	}
-
-	public void setLenguajeRecidido(String lenguajeRecidido) {
-		this.lenguajeRecidido = lenguajeRecidido;
+	public void setLenguajeRecibido(String lenguajeRecibido) {
+		this.lenguajeRecibido = lenguajeRecibido;
 	}
 
 	public String getLenguajeATraducir() {
@@ -76,25 +82,66 @@ public class Codigo {
 		this.lenguajeATraducir = lenguajeATraducir;
 	}
 
-	public ArrayList<Codigo> getInteligenciasUsadas() {
-		return inteligenciasUsadas;
+	public String getProveedorIA() {
+		return proveedorIA;
 	}
 
-	public void setInteligenciasUsadas(ArrayList<Codigo> inteligenciasUsadas) {
-		this.inteligenciasUsadas = inteligenciasUsadas;
+	public void setProveedorIA(String proveedorIA) {
+		this.proveedorIA = proveedorIA;
+	}
+
+	public boolean isExitoso() {
+		return exitoso;
+	}
+
+	public void setExitoso(boolean exitoso) {
+		this.exitoso = exitoso;
+	}
+
+	public LocalDateTime getFechaCreacion() {
+		return fechaCreacion;
+	}
+
+	public void setFechaCreacion(LocalDateTime fechaCreacion) {
+		this.fechaCreacion = fechaCreacion;
+	}
+
+	public String getCodigoRecibido() {
+		return codigoRecibido;
+	}
+
+	public void setCodigoRecibido(String codigoRecibido) {
+		this.codigoRecibido = codigoRecibido;
+	}
+
+	public String getCodigoTraducido() {
+		return codigoTraducido;
+	}
+
+	public void setCodigoTraducido(String codigoTraducido) {
+		this.codigoTraducido = codigoTraducido;
+	}
+
+	public long getClienteId() {
+		return clienteId;
+	}
+
+	public void setClienteId(long clienteId) {
+		this.clienteId = clienteId;
 	}
 
 	@Override
 	public String toString() {
-		return "Codigo [id=" + id + ", usuarioSolicitud=" + usuarioSolicitud + ", codigoRecibido=" + codigoRecibido
-				+ ", lenguajeRecidido=" + lenguajeRecidido + ", lenguajeATraducir=" + lenguajeATraducir
-				+ ", inteligenciasUsadas=" + inteligenciasUsadas + "]";
+		return "Codigo [id=" + id + ", usuarioSolicitud=" + usuarioSolicitud + ", lenguajeRecibido=" + lenguajeRecibido
+				+ ", lenguajeATraducir=" + lenguajeATraducir + ", proveedorIA=" + proveedorIA + ", exitoso=" + exitoso
+				+ ", fechaCreacion=" + fechaCreacion + ", codigoRecibido=" + codigoRecibido + ", codigoTraducido="
+				+ codigoTraducido + " clienteId=" + clienteId + "]";
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(codigoRecibido, id, inteligenciasUsadas, lenguajeATraducir, lenguajeRecidido,
-				usuarioSolicitud);
+		return Objects.hash(clienteId, codigoRecibido, codigoTraducido, exitoso, fechaCreacion, id, lenguajeATraducir,
+				lenguajeRecibido, proveedorIA, usuarioSolicitud);
 	}
 
 	@Override
@@ -106,10 +153,12 @@ public class Codigo {
 		if (getClass() != obj.getClass())
 			return false;
 		Codigo other = (Codigo) obj;
-		return Objects.equals(codigoRecibido, other.codigoRecibido) && id == other.id
-				&& Objects.equals(inteligenciasUsadas, other.inteligenciasUsadas)
+		return clienteId == other.clienteId && Objects.equals(codigoRecibido, other.codigoRecibido)
+				&& Objects.equals(codigoTraducido, other.codigoTraducido) && exitoso == other.exitoso
+				&& Objects.equals(fechaCreacion, other.fechaCreacion) && id == other.id
 				&& Objects.equals(lenguajeATraducir, other.lenguajeATraducir)
-				&& Objects.equals(lenguajeRecidido, other.lenguajeRecidido)
+				&& Objects.equals(lenguajeRecibido, other.lenguajeRecibido)
+				&& Objects.equals(proveedorIA, other.proveedorIA)
 				&& Objects.equals(usuarioSolicitud, other.usuarioSolicitud);
 	}
 
