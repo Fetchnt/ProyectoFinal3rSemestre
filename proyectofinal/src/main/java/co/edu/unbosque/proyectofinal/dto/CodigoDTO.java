@@ -19,7 +19,7 @@ public class CodigoDTO {
 	private String lenguajeRecibido;
 	private String lenguajeATraducir;
 	private String proveedorIA;
-	private boolean exitoso;
+	private Boolean exitoso;
 	private LocalDateTime fechaCreacion;
 	private String codigoRecibido;
 	private String codigoTraducido;
@@ -31,7 +31,7 @@ public class CodigoDTO {
 	}
 
 	public CodigoDTO(String usuarioSolicitud, String lenguajeRecibido, String lenguajeATraducir, String proveedorIA,
-			boolean exitoso, LocalDateTime fechaCreacion, String codigoRecibido, String codigoTraducido,
+			Boolean exitoso, LocalDateTime fechaCreacion, String codigoRecibido, String codigoTraducido,
 			List<CodigoDTO> inteligenciasUsadas, long clienteId) {
 		super();
 		this.usuarioSolicitud = usuarioSolicitud;
@@ -86,11 +86,11 @@ public class CodigoDTO {
 		this.proveedorIA = proveedorIA;
 	}
 
-	public boolean isExitoso() {
+	public Boolean isExitoso() {
 		return exitoso;
 	}
 
-	public void setExitoso(boolean exitoso) {
+	public void setExitoso(Boolean exitoso) {
 		this.exitoso = exitoso;
 	}
 
