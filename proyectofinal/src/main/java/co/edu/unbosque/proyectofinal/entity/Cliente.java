@@ -1,12 +1,8 @@
 package co.edu.unbosque.proyectofinal.entity;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
-
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "cliente")
@@ -18,18 +14,28 @@ public class Cliente {
 	private String usuario;
 	private String contrasenia;
 	private String correo;
+	private boolean verificado;
 
+	// Campos para verificación por código
+	private String codigoVerificacion;
+	private LocalDateTime expiracionCodigo;
+
+	// Constructores, getters y setters
 	public Cliente() {
-		super();
 	}
 
-	public Cliente(String usuario, String contrasenia, String correo) {
-		super();
+	public Cliente(long id, String usuario, String contrasenia, String correo, boolean verificado,
+			String codigoVerificacion, LocalDateTime expiracionCodigo) {
+		this.id = id;
 		this.usuario = usuario;
 		this.contrasenia = contrasenia;
 		this.correo = correo;
+		this.verificado = verificado;
+		this.codigoVerificacion = codigoVerificacion;
+		this.expiracionCodigo = expiracionCodigo;
 	}
 
+	// Getters y Setters (incluyendo los nuevos)
 	public long getId() {
 		return id;
 	}
@@ -62,30 +68,49 @@ public class Cliente {
 		this.correo = correo;
 	}
 
+	public boolean isVerificado() {
+		return verificado;
+	}
+
+	public void setVerificado(boolean verificado) {
+		this.verificado = verificado;
+	}
+
+	public String getCodigoVerificacion() {
+		return codigoVerificacion;
+	}
+
+	public void setCodigoVerificacion(String codigoVerificacion) {
+		this.codigoVerificacion = codigoVerificacion;
+	}
+
+	public LocalDateTime getExpiracionCodigo() {
+		return expiracionCodigo;
+	}
+
+	public void setExpiracionCodigo(LocalDateTime expiracionCodigo) {
+		this.expiracionCodigo = expiracionCodigo;
+	}
+
 	@Override
-	public String toString() {
-		return "Cliente [id=" + id + ", usuario=" + usuario + ", contrasenia=" + contrasenia + ", correo=" + correo
-				+ ", getId()=" + getId() + ", getUsuario()=" + getUsuario() + ", getContrasenia()=" + getContrasenia()
-				+ ", getCorreo()=" + getCorreo() + ", getClass()=" + getClass() + ", hashCode()=" + hashCode()
-				+ ", toString()=" + super.toString() + "]";
+	public boolean equals(Object o) {
+		if (this == o)
+			return true;
+		if (o == null || getClass() != o.getClass())
+			return false;
+		Cliente cliente = (Cliente) o;
+		return id == cliente.id && verificado == cliente.verificado && Objects.equals(usuario, cliente.usuario)
+				&& Objects.equals(contrasenia, cliente.contrasenia) && Objects.equals(correo, cliente.correo);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(contrasenia, correo, id, usuario);
+		return Objects.hash(id, usuario, contrasenia, correo, verificado);
 	}
 
 	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Cliente other = (Cliente) obj;
-		return Objects.equals(contrasenia, other.contrasenia) && Objects.equals(correo, other.correo) && id == other.id
-				&& Objects.equals(usuario, other.usuario);
+	public String toString() {
+		return "Cliente{" + "id=" + id + ", usuario='" + usuario + '\'' + ", correo='" + correo + '\'' + ", verificado="
+				+ verificado + '}';
 	}
-
 }

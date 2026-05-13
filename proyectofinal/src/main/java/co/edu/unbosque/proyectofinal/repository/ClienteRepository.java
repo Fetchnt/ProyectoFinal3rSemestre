@@ -9,4 +9,6 @@ import co.edu.unbosque.proyectofinal.entity.Cliente;
 public interface ClienteRepository extends CrudRepository<Cliente, Long> {
 
 	Optional<Cliente> findByUsuario(String usuario);
+	Optional<Cliente> findByCorreo(String correo);
+	boolean existsByCorreo(String correo);
 }
