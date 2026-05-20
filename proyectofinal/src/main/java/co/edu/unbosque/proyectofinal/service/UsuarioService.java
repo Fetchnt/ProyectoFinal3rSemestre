@@ -156,7 +156,7 @@ public class UsuarioService implements CRUDOPERATION<UsuarioDTO> {
 		}
 		UserDetails userDetails = org.springframework.security.core.userdetails.User.withUsername(cliente.getUsuario())
 				.password(cliente.getContrasenia()).roles(cliente.getRol().name()).build();
-		return jwtUtil.generateToken(userDetails);
+		return jwtUtil.generateToken(cliente);
 	}
 
 	public boolean enviarCorreoVerificacion(String correo) {

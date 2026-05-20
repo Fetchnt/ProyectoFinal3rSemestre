@@ -10,13 +10,13 @@ import org.springframework.stereotype.Service;
 
 import com.google.gson.Gson;
 
+import co.edu.unbosque.proyectofinal.ai.AiProvider;
+import co.edu.unbosque.proyectofinal.ai.MistralProvider;
+import co.edu.unbosque.proyectofinal.ai.NvidiaProvider;
+import co.edu.unbosque.proyectofinal.ai.GroqProvider;
 import co.edu.unbosque.proyectofinal.dto.CodigoDTO;
 import co.edu.unbosque.proyectofinal.entity.Codigo;
 import co.edu.unbosque.proyectofinal.repository.CodigoRepository;
-import co.edu.unbosque.proyectofinal.service.ai.AiProvider;
-import co.edu.unbosque.proyectofinal.service.ai.MistralProvider;
-import co.edu.unbosque.proyectofinal.service.ai.NvidiaProvider;
-import co.edu.unbosque.proyectofinal.service.ai.QwenProvider;
 
 @Service
 public class CodigoService implements CRUDOPERATION<CodigoDTO> {
@@ -24,7 +24,7 @@ public class CodigoService implements CRUDOPERATION<CodigoDTO> {
 	@Autowired
 	private CodigoRepository codigoRepository;
 	@Autowired
-	private QwenProvider qwenProvider;
+	private GroqProvider groqProvider;
 	@Autowired
 	private NvidiaProvider nvidiaProvider;
 	@Autowired
@@ -36,7 +36,7 @@ public class CodigoService implements CRUDOPERATION<CodigoDTO> {
 
 	public CodigoDTO traducirConTodasLasIAs(CodigoDTO dto) {
 		ArrayList<CodigoDTO> resultados = new ArrayList<>();
-		resultados.add(llamarProveedor(dto, qwenProvider));
+		resultados.add(llamarProveedor(dto, groqProvider));
 		resultados.add(llamarProveedor(dto, nvidiaProvider));
 		resultados.add(llamarProveedor(dto, mistralProvider));
 		dto.setInteligenciasUsadas(resultados);
@@ -49,14 +49,13 @@ public class CodigoService implements CRUDOPERATION<CodigoDTO> {
 
 		if (nombreProveedor == null || nombreProveedor.isBlank()) {
 			proveedorSeleccionado = mistralProvider;
-		} else if (nombreProveedor.equalsIgnoreCase("qwen")) {
-			proveedorSeleccionado = qwenProvider;
-		}else if(nombreProveedor.equalsIgnoreCase("nvidia")) {
+		} else if (nombreProveedor.equalsIgnoreCase("groq")) {
+			proveedorSeleccionado = groqProvider;
+		} else if (nombreProveedor.equalsIgnoreCase("nvidia")) {
 			proveedorSeleccionado = nvidiaProvider;
-		}else if(nombreProveedor.equalsIgnoreCase("mistral")) {
+		} else if (nombreProveedor.equalsIgnoreCase("mistral")) {
 			proveedorSeleccionado = mistralProvider;
-		}
-		else {
+		} else {
 			CodigoDTO error = new CodigoDTO();
 			error.setUsuarioSolicitud("sistema");
 			error.setCodigoRecibido("Proveedor no reconocido: " + nombreProveedor);
@@ -102,7 +101,7 @@ public class CodigoService implements CRUDOPERATION<CodigoDTO> {
 	}
 
 	public List<String> getProveedoresDisponibles() {
-		return List.of(qwenProvider.getNombre(), nvidiaProvider.getNombre(), mistralProvider.getNombre());
+		return List.of(groqProvider.getNombre(), nvidiaProvider.getNombre(), mistralProvider.getNombre());
 	}
 
 	public List<String> getLenguajesSoportados() {

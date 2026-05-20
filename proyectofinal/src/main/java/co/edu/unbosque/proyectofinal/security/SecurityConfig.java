@@ -1,6 +1,5 @@
 package co.edu.unbosque.proyectofinal.security;
 
-import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -23,12 +22,14 @@ import java.util.Arrays;
 @EnableWebSecurity
 public class SecurityConfig {
 
-	private final JwtAuthenticationFilter jwtAuthFilter;
+	private final JwtUtil jwtUtil;
 	private final UserDetailsService userDetailsService;
+	private final JwtAuthenticationFilter jwtAuthFilter;
 
-	public SecurityConfig(JwtAuthenticationFilter jwtAuthFilter, UserDetailsService userDetailsService) {
-		this.jwtAuthFilter = jwtAuthFilter;
+	public SecurityConfig(JwtUtil jwtUtil, UserDetailsService userDetailsService) {
+		this.jwtUtil = jwtUtil;
 		this.userDetailsService = userDetailsService;
+		this.jwtAuthFilter = new JwtAuthenticationFilter(jwtUtil, userDetailsService);
 	}
 
 	@Bean
@@ -38,11 +39,15 @@ public class SecurityConfig {
 		authProvider.setPasswordEncoder(passwordEncoder());
 
 		http.csrf(csrf -> csrf.disable()).cors(cors -> cors.configurationSource(corsConfigurationSource()))
-				.authorizeHttpRequests(auth -> auth.requestMatchers("/auth/**").permitAll()
-						.requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
-						.requestMatchers("/usuario/register", "/usuario/login", "/usuario/verify", "/usuario/resend", "/usuario/proveedores", "/usuario/lenguajes").permitAll()
-						.requestMatchers("/usuario/traducir", "/usuario/traducir/todas").hasRole("USUARIO")
-						.requestMatchers("/usuario/**").hasRole("ADMIN")
+				.authorizeHttpRequests(auth -> auth.requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
+						.requestMatchers("/usuario/register", "/usuario/login", "/usuario/verificar",
+								"/usuario/reenviarcodigo")
+						.permitAll().requestMatchers("/codigo/proveedores", "/codigo/lenguajes").permitAll()
+						.requestMatchers("/codigo/traducir").hasAnyRole("USUARIO", "ADMIN")
+						.requestMatchers("/codigo/traducir/todas").hasAnyRole("USUARIO", "ADMIN")
+						.requestMatchers("/codigo/ejecutar").hasAnyRole("USUARIO", "ADMIN")
+						.requestMatchers("/codigo/historial/**").hasAnyRole("USUARIO", "ADMIN")
+						.requestMatchers("/usuario/**").hasRole("ADMIN").requestMatchers("/codigo/**").hasRole("ADMIN")
 						.anyRequest().authenticated())
 				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 				.authenticationProvider(authProvider)
@@ -62,13 +67,6 @@ public class SecurityConfig {
 	}
 
 	@Bean
-	public FilterRegistrationBean<JwtAuthenticationFilter> jwtFilterRegistration(JwtAuthenticationFilter filter) {
-		FilterRegistrationBean<JwtAuthenticationFilter> registration = new FilterRegistrationBean<>(filter);
-		registration.setEnabled(false);
-		return registration;
-	}
-
-	@Bean
 	public CorsConfigurationSource corsConfigurationSource() {
 		CorsConfiguration configuration = new CorsConfiguration();
 		configuration.setAllowedOrigins(Arrays.asList("http://localhost:4200"));
@@ -80,4 +78,5 @@ public class SecurityConfig {
 		source.registerCorsConfiguration("/**", configuration);
 		return source;
 	}
+
 }

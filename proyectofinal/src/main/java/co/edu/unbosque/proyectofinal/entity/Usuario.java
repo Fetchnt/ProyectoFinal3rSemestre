@@ -1,16 +1,17 @@
 package co.edu.unbosque.proyectofinal.entity;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 
-import org.jspecify.annotations.Nullable;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "cliente")
+@Table(name = "usuario")
 public class Usuario implements UserDetails {
 
 	@Id
@@ -21,14 +22,14 @@ public class Usuario implements UserDetails {
 	@Enumerated(EnumType.STRING)
 	private Rol rol;
 	private String correo;
-	private boolean verificado;
+	private Boolean verificado;
 	private String codigoVerificacion;
 
 	public Usuario() {
 		super();
 	}
 
-	public Usuario(String usuario, String contrasenia, Rol rol, String correo, boolean verificado) {
+	public Usuario(String usuario, String contrasenia, Rol rol, String correo, Boolean verificado) {
 		super();
 		this.usuario = usuario;
 		this.contrasenia = contrasenia;
@@ -77,11 +78,11 @@ public class Usuario implements UserDetails {
 		this.correo = correo;
 	}
 
-	public boolean isVerificado() {
+	public Boolean isVerificado() {
 		return verificado;
 	}
 
-	public void setVerificado(boolean verificado) {
+	public void setVerificado(Boolean verificado) {
 		this.verificado = verificado;
 	}
 
@@ -91,6 +92,44 @@ public class Usuario implements UserDetails {
 
 	public void setCodigoVerificacion(String codigoVerificacion) {
 		this.codigoVerificacion = codigoVerificacion;
+	}
+
+	@Override
+	public Collection<? extends GrantedAuthority> getAuthorities() {
+		if (rol == null) {
+			return List.of();
+		}
+		return List.of(new SimpleGrantedAuthority("ROLE_" + rol.name()));
+	}
+
+	@Override
+	public String getPassword() {
+		return contrasenia;
+	}
+
+	@Override
+	public String getUsername() {
+		return usuario;
+	}
+
+	@Override
+	public boolean isAccountNonExpired() {
+		return true;
+	}
+
+	@Override
+	public boolean isAccountNonLocked() {
+		return true;
+	}
+
+	@Override
+	public boolean isCredentialsNonExpired() {
+		return true;
+	}
+
+	@Override
+	public boolean isEnabled() {
+		return verificado != null && verificado;
 	}
 
 	@Override
@@ -115,25 +154,6 @@ public class Usuario implements UserDetails {
 		Usuario other = (Usuario) obj;
 		return Objects.equals(contrasenia, other.contrasenia) && Objects.equals(correo, other.correo)
 				&& Objects.equals(id, other.id) && rol == other.rol && Objects.equals(usuario, other.usuario)
-				&& verificado == other.verificado;
+				&& Objects.equals(verificado, other.verificado);
 	}
-
-	@Override
-	public Collection<? extends GrantedAuthority> getAuthorities() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public @Nullable String getPassword() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public String getUsername() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 }

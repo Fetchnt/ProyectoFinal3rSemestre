@@ -13,7 +13,7 @@ import jakarta.persistence.Table;
 
 public class CodigoDTO {
 
-	private long id;
+	private Long id;
 
 	private String usuarioSolicitud;
 	private String lenguajeRecibido;
@@ -24,7 +24,7 @@ public class CodigoDTO {
 	private String codigoRecibido;
 	private String codigoTraducido;
 	private List<CodigoDTO> inteligenciasUsadas;
-	private long clienteId;
+	private Long clienteId;
 
 	public CodigoDTO() {
 		super();
@@ -32,7 +32,7 @@ public class CodigoDTO {
 
 	public CodigoDTO(String usuarioSolicitud, String lenguajeRecibido, String lenguajeATraducir, String proveedorIA,
 			Boolean exitoso, LocalDateTime fechaCreacion, String codigoRecibido, String codigoTraducido,
-			List<CodigoDTO> inteligenciasUsadas, long clienteId) {
+			List<CodigoDTO> inteligenciasUsadas, Long clienteId) {
 		super();
 		this.usuarioSolicitud = usuarioSolicitud;
 		this.lenguajeRecibido = lenguajeRecibido;
@@ -46,11 +46,11 @@ public class CodigoDTO {
 		this.clienteId = clienteId;
 	}
 
-	public long getId() {
+	public Long getId() {
 		return id;
 	}
 
-	public void setId(long id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 
@@ -126,11 +126,11 @@ public class CodigoDTO {
 		this.inteligenciasUsadas = inteligenciasUsadas;
 	}
 
-	public long getClienteId() {
+	public Long getClienteId() {
 		return clienteId;
 	}
 
-	public void setClienteId(long clienteId) {
+	public void setClienteId(Long clienteId) {
 		this.clienteId = clienteId;
 	}
 
