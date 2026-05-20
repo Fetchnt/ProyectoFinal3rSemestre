@@ -18,6 +18,10 @@ import com.google.gson.Gson;
 import co.edu.unbosque.proyectofinal.dto.UsuarioDTO;
 import co.edu.unbosque.proyectofinal.entity.Rol;
 import co.edu.unbosque.proyectofinal.entity.Usuario;
+import co.edu.unbosque.proyectofinal.exception.ContraseniaInvalidaException;
+import co.edu.unbosque.proyectofinal.exception.CorreoInvalidoException;
+import co.edu.unbosque.proyectofinal.exception.LanzadorExcepciones;
+import co.edu.unbosque.proyectofinal.exception.UsuarioInvalidoException;
 import co.edu.unbosque.proyectofinal.repository.UsuarioRepository;
 import co.edu.unbosque.proyectofinal.security.JwtUtil;
 
@@ -46,14 +50,27 @@ public class UsuarioService implements CRUDOPERATION<UsuarioDTO> {
 
 	@Override
 	public int create(UsuarioDTO data) {
+		try {
+			LanzadorExcepciones.verifyNickname(data.getUsuario());
+			LanzadorExcepciones.verifyRegisterPassword(data.getContrasenia());
+			LanzadorExcepciones.verifyEmail(data.getCorreo());
+		} catch (UsuarioInvalidoException e) {
+			return 3;
+		} catch (ContraseniaInvalidaException e) {
+			return 4;
+		} catch (CorreoInvalidoException e) {
+			return 5;
+		}
+
 		if (uRep.findByUsuario(data.getUsuario()).isPresent()) {
 			return 1;
 		}
 		if (uRep.existsByCorreo(data.getCorreo())) {
 			return 2;
 		}
+
 		Usuario entity = mapper.map(data, Usuario.class);
-		entity.setId(null); // evita que Hibernate intente merge con id=0
+		entity.setId(null);
 		entity.setContrasenia(passwordEncoder.encode(data.getContrasenia()));
 		entity.setVerificado(false);
 		entity.setRol(Rol.USUARIO);
@@ -94,14 +111,29 @@ public class UsuarioService implements CRUDOPERATION<UsuarioDTO> {
 		if (!encontrado.isPresent()) {
 			return 1;
 		}
+
+		try {
+			LanzadorExcepciones.verifyNickname(data.getUsuario());
+			LanzadorExcepciones.verifyRegisterPassword(data.getContrasenia());
+			LanzadorExcepciones.verifyEmail(data.getCorreo());
+		} catch (UsuarioInvalidoException e) {
+			return 4;
+		} catch (ContraseniaInvalidaException e) {
+			return 5;
+		} catch (CorreoInvalidoException e) {
+			return 6;
+		}
+
 		Optional<Usuario> usuarioExistente = uRep.findByUsuario(data.getUsuario());
-		if (usuarioExistente.isPresent()) {
+		if (usuarioExistente.isPresent() && !usuarioExistente.get().getId().equals(id)) {
 			return 2;
 		}
+
 		Optional<Usuario> emailExistente = uRep.findByCorreo(data.getCorreo());
-		if (emailExistente.isPresent()) {
+		if (emailExistente.isPresent() && !emailExistente.get().getId().equals(id)) {
 			return 3;
 		}
+
 		Usuario cliente = encontrado.get();
 		cliente.setUsuario(data.getUsuario());
 		cliente.setContrasenia(passwordEncoder.encode(data.getContrasenia()));
