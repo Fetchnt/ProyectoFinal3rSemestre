@@ -1,0 +1,60 @@
+.stat-card {
+  transition: box-shadow 0.2s, transform 0.2s;
+}
+.stat-card:hover {
+  box-shadow: 6px 6px 0 #000 !important;
+  transform: translateY(-3px);
+}
+.head{
+  color: #ffffff;
+}
+.audit-table thead th {
+  font-size: 0.72rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  font-weight: 600;
+  border: none;
+}
+
+.audit-table tbody tr.audit-row {
+  border-bottom: 1px solid #ddd;
+  transition: background 0.15s;
+}
+.audit-table tbody tr.audit-row:hover {
+  background: #f5f5f5;
+}
+
+.avatar-xs {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  font-size: 11px;
+  flex-shrink: 0;
+}
+
+.badge-exitoso {
+  background-color: #198754 !important;
+  color: #fff;
+}
+.badge-fallido {
+  background-color: #dc3545 !important;
+  color: #fff;
+}
+.badge-advertencia {
+  background-color: #ffc107 !important;
+  color: #000;
+}
+
+.label-xs {
+  font-size: 10px;
+}
+
+.form-select:focus,
+.form-control:focus {
+  border-color: #000 !important;
+  box-shadow: none !important;
+}
+
+.delay-1 { animation-delay: 0.1s; }
+.delay-2 { animation-delay: 0.2s; }
+.delay-3 { animation-delay: 0.3s; }

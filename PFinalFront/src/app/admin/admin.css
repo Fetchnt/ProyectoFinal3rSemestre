@@ -5,13 +5,16 @@
   box-shadow: 6px 6px 0 #000 !important;
   transform: translateY(-3px);
 }
-
+.head{
+  color: #ffffff;
+}
 .admin-table thead th {
   font-size: 0.72rem;
-  letter-spacing: 1px;
+  letter-spacing: 4px;
   text-transform: uppercase;
-  font-weight: 600;
+  font-weight: 900;
   border: none;
+
 }
 .admin-table tbody tr {
   border-bottom: 1px solid #ddd;
