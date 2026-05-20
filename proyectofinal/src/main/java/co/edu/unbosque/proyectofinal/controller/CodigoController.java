@@ -3,102 +3,91 @@ package co.edu.unbosque.proyectofinal.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import co.edu.unbosque.proyectofinal.dto.CodigoDTO;
 import co.edu.unbosque.proyectofinal.service.CodigoService;
+import co.edu.unbosque.proyectofinal.service.Judge0Service;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
-@RequestMapping("/api/codigo")
+@RequestMapping("/codigo")
 @CrossOrigin(origins = { "http://localhost:4200", "http://localhost:8080", "*" })
-@Tag(name = "Traductor de Código", description = "Endpoints para traducción de código entre lenguajes")
 public class CodigoController {
 
 	@Autowired
 	private CodigoService codigoService;
 
-	/**
-	 * Traduce con las 3 IAs al mismo tiempo. Body: { usuarioSolicitud,
-	 * codigoRecibido, lenguajeRecidido, lenguajeATraducir }
-	 */
+	@Autowired
+	private Judge0Service judge0Service;
+
 	@PostMapping("/traducir/todas")
-	@Operation(summary = "Traduce con todas las IAs disponibles", description = "Llama a Gemini, DeepSeek y Qwen y retorna los 3 resultados")
 	public ResponseEntity<CodigoDTO> traducirConTodas(@RequestBody CodigoDTO dto) {
-		try {
-			CodigoDTO resultado = codigoService.traducirConTodasLasIAs(dto);
-			return new ResponseEntity<>(resultado, HttpStatus.OK);
-		} catch (Exception e) {
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-		}
+		String nombreUsuario = codigoService.getByClienteId(dto.getClienteId());
+		dto.setUsuarioSolicitud(nombreUsuario);
+		CodigoDTO resultado = codigoService.traducirConTodasLasIAs(dto);
+		return new ResponseEntity<>(resultado, HttpStatus.OK);
 	}
 
-	/**
-	 * Traduce con una IA específica. Body: { usuarioSolicitud, codigoRecibido,
-	 * lenguajeRecidido, lenguajeATraducir } Param: proveedor = "gemini" |
-	 * "deepseek" | "qwen"
-	 */
 	@PostMapping("/traducir")
-	@Operation(summary = "Traduce con un proveedor específico", description = "Elige entre gemini, deepseek o qwen")
-	public ResponseEntity<CodigoDTO> traducirConProveedor(@RequestBody CodigoDTO dto,
-			@RequestParam(defaultValue = "gemini") String proveedor) {
-		try {
-			CodigoDTO resultado = codigoService.traducirConProveedorEspecifico(dto, proveedor);
-			return new ResponseEntity<>(resultado, HttpStatus.OK);
-		} catch (Exception e) {
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+	public ResponseEntity<CodigoDTO> traducirConProveedor(@RequestBody CodigoDTO dto) {
+		String nombreUsuario = codigoService.getByClienteId(dto.getClienteId());
+		dto.setUsuarioSolicitud(nombreUsuario);
+		CodigoDTO resultado = codigoService.traducirConProveedorEspecifico(dto, dto.getProveedorIA());
+		return new ResponseEntity<>(resultado, HttpStatus.OK);
+	}
+
+	@PostMapping("/ejecutar")
+	@Operation(summary = "Ejecutar código con Judge0")
+	public ResponseEntity<String> ejecutarCodigo(@RequestBody CodigoDTO dto) {
+		if (dto.getCodigoTraducido() == null || dto.getLenguajeATraducir() == null) {
+			return new ResponseEntity<>("Debe proporcionar codigoTraducido y lenguajeATraducir",
+					HttpStatus.BAD_REQUEST);
 		}
+		String resultado = judge0Service.ejecutarCodigo(dto.getCodigoTraducido(), dto.getLenguajeATraducir());
+		return new ResponseEntity<>(resultado, HttpStatus.OK);
+	}
+
+	@GetMapping("/historial")
+	public ResponseEntity<String> historial(@RequestBody CodigoDTO dto) {
+		String historial = codigoService.getByClienteId(dto.getClienteId());
+		return new ResponseEntity<>(historial, HttpStatus.OK);
 	}
 
 	@GetMapping("/proveedores")
-	@Operation(summary = "Lista los proveedores de IA disponibles")
-	public ResponseEntity<?> getProveedores() {
+	@Operation(summary = "Ver proveedores de IA disponibles")
+	public ResponseEntity<?> proveedores() {
 		return new ResponseEntity<>(codigoService.getProveedoresDisponibles(), HttpStatus.OK);
 	}
 
 	@GetMapping("/lenguajes")
-	@Operation(summary = "Lista los lenguajes soportados")
-	public ResponseEntity<?> getLenguajes() {
+	@Operation(summary = "Ver lenguajes soportados")
+	public ResponseEntity<?> lenguajes() {
 		return new ResponseEntity<>(codigoService.getLenguajesSoportados(), HttpStatus.OK);
 	}
 
-	@GetMapping("/historial")
-	@Operation(summary = "Obtiene todo el historial de traducciones")
-	public ResponseEntity<String> getHistorial() {
-		return new ResponseEntity<>(codigoService.getAll(), HttpStatus.OK);
-	}
-
-	@GetMapping("/historial/cliente/{clienteId}")
-	@Operation(summary = "Obtiene el historial de un cliente específico")
-	public ResponseEntity<String> getHistorialPorCliente(@PathVariable long clienteId) {
-		return new ResponseEntity<>(codigoService.getByClienteId(clienteId), HttpStatus.OK);
-	}
-
-	@DeleteMapping("/historial/{id}")
-	@Operation(summary = "Elimina una traducción del historial")
-	public ResponseEntity<String> eliminar(@PathVariable Long id) {
-		int resultado = codigoService.deleteById(id);
-		if (resultado == 0) {
-			return new ResponseEntity<>("Eliminado correctamente", HttpStatus.OK);
-		} else if (resultado == 1) {
-			return new ResponseEntity<>("No encontrado", HttpStatus.NOT_FOUND);
+	@DeleteMapping("/eliminartraduccion")
+	@Operation(summary = "Eliminar traducción por ID")
+	public ResponseEntity<String> eliminarTraduccion(@RequestBody CodigoDTO dto) {
+		int status = codigoService.deleteById(dto.getId());
+		if (status == 0) {
+			return new ResponseEntity<>("Traducción eliminada", HttpStatus.OK);
+		} else {
+			return new ResponseEntity<>("Traducción no encontrada", HttpStatus.NOT_FOUND);
 		}
-		return new ResponseEntity<>("Error al eliminar", HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 
-	@GetMapping("/historial/count")
-	@Operation(summary = "Cuenta el total de traducciones guardadas")
+	@GetMapping("/all")
+	@Operation(summary = "Ver todas las traducciones")
+	public ResponseEntity<String> getAll() {
+		String lista = codigoService.getAll();
+		return new ResponseEntity<>(lista, HttpStatus.OK);
+	}
+
+	@GetMapping("/count")
+	@Operation(summary = "Contar traducciones")
 	public ResponseEntity<Long> count() {
-		return new ResponseEntity<>(codigoService.count(), HttpStatus.OK);
+		long total = codigoService.count();
+		return new ResponseEntity<>(total, HttpStatus.OK);
 	}
 }

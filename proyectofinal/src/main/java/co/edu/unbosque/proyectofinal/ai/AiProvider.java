@@ -1,4 +1,4 @@
-package co.edu.unbosque.proyectofinal.service.ai;
+package co.edu.unbosque.proyectofinal.ai;
 
 /**
  * Interfaz que define el contrato para todos los proveedores de IA.

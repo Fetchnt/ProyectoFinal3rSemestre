@@ -19,8 +19,6 @@ public class UsuarioController {
 	@Autowired
 	private UsuarioService clienteService;
 
-	@Autowired
-	private CodigoService cService;
 
 	@PostMapping("/register")
 	public ResponseEntity<String> register(@RequestBody UsuarioDTO dto) {
@@ -49,8 +47,8 @@ public class UsuarioController {
 		}
 	}
 
-	@PostMapping("/verify")
-	public ResponseEntity<String> verifyEmail(@RequestBody UsuarioDTO dto) {
+	@PostMapping("/verificar")
+	public ResponseEntity<String> verficarCorreo(@RequestBody UsuarioDTO dto) {
 		boolean verificado = clienteService.confirmarCodigo(dto.getCorreo(), dto.getCodigoVerificacion());
 		if (verificado) {
 			return new ResponseEntity<>("Correo verificado correctamente", HttpStatus.OK);
@@ -59,8 +57,8 @@ public class UsuarioController {
 		}
 	}
 
-	@PostMapping("/resend")
-	public ResponseEntity<String> resendCode(@RequestBody UsuarioDTO dto) {
+	@PostMapping("/reenviarcodigo")
+	public ResponseEntity<String> reenviarCorreo(@RequestBody UsuarioDTO dto) {
 		boolean enviado = clienteService.enviarCorreoVerificacion(dto.getCorreo());
 		if (enviado) {
 			return new ResponseEntity<>("Código reenviado", HttpStatus.OK);
@@ -69,14 +67,8 @@ public class UsuarioController {
 		}
 	}
 
-	@GetMapping("/all")
-	public ResponseEntity<String> getAll() {
-		String lista = clienteService.getAll();
-		return new ResponseEntity<>(lista, HttpStatus.OK);
-	}
-
-	@DeleteMapping("/delete/{id}")
-	public ResponseEntity<String> delete(@PathVariable Long id) {
+	@DeleteMapping("/eliminarusuario")
+	public ResponseEntity<String> eliminarUsuario(@PathVariable Long id) {
 		int status = clienteService.deleteById(id);
 		if (status == 0) {
 			return new ResponseEntity<>("Cliente eliminado", HttpStatus.OK);
@@ -85,8 +77,8 @@ public class UsuarioController {
 		}
 	}
 
-	@PutMapping("/{id}")
-	public ResponseEntity<String> update(@PathVariable Long id, @RequestBody UsuarioDTO dto) {
+	@PutMapping("/actualizar")
+	public ResponseEntity<String> actualizar(@PathVariable Long id, @RequestBody UsuarioDTO dto) {
 		int status = clienteService.updateById(id, dto);
 		if (status == 0) {
 			return new ResponseEntity<>("Cliente actualizado", HttpStatus.OK);
@@ -101,35 +93,5 @@ public class UsuarioController {
 		}
 	}
 
-	@GetMapping("/count")
-	public ResponseEntity<Long> count() {
-		long total = clienteService.count();
-		return new ResponseEntity<>(total, HttpStatus.OK);
-	}
 
-	@PostMapping("/traducir/todas")
-	@Operation(summary = "Traducir con las 3 IAs")
-	public ResponseEntity<CodigoDTO> traducirConTodas(@RequestBody CodigoDTO dto) {
-		String nombreUsuario = clienteService.obtenerUsuarioPorId(dto.getClienteId());
-		dto.setUsuarioSolicitud(nombreUsuario);
-		CodigoDTO resultado = cService.traducirConTodasLasIAs(dto);
-		return new ResponseEntity<>(resultado, HttpStatus.OK);
-	}
-
-	@PostMapping("/traducir")
-	@Operation(summary = "Traducir con un proveedor específico")
-	public ResponseEntity<CodigoDTO> traducirConProveedor(@RequestBody CodigoDTO dto) {
-		String nombreUsuario = clienteService.obtenerUsuarioPorId(dto.getClienteId());
-		dto.setUsuarioSolicitud(nombreUsuario);
-		String proveedor = dto.getProveedorIA();
-		CodigoDTO resultado = cService.traducirConProveedorEspecifico(dto, proveedor);
-		return new ResponseEntity<>(resultado, HttpStatus.OK);
-	}
-
-	@GetMapping("/historial/{clienteId}")
-	@Operation(summary = "Ver historial de traducciones del cliente")
-	public ResponseEntity<String> historial(@PathVariable long clienteId) {
-		String historial = cService.getByClienteId(clienteId);
-		return new ResponseEntity<>(historial, HttpStatus.OK);
-	}
 }

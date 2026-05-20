@@ -17,7 +17,7 @@ public class Codigo {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private long id;
+	private Long id;
 
 	private String usuarioSolicitud;
 	private String lenguajeRecibido;
@@ -29,7 +29,7 @@ public class Codigo {
 	private String codigoRecibido;
 	@Column(columnDefinition = "TEXT")
 	private String codigoTraducido;
-	private long clienteId;
+	private Long clienteId;
 
 	public Codigo() {
 		super();
@@ -37,7 +37,7 @@ public class Codigo {
 
 	public Codigo(String usuarioSolicitud, String lenguajeRecibido, String lenguajeATraducir, String proveedorIA,
 			Boolean exitoso, LocalDateTime fechaCreacion, String codigoRecibido, String codigoTraducido,
-			List<Codigo> inteligenciasUsadas, long clienteId) {
+			List<Codigo> inteligenciasUsadas, Long clienteId) {
 		super();
 		this.usuarioSolicitud = usuarioSolicitud;
 		this.lenguajeRecibido = lenguajeRecibido;
@@ -50,11 +50,11 @@ public class Codigo {
 		this.clienteId = clienteId;
 	}
 
-	public long getId() {
+	public Long getId() {
 		return id;
 	}
 
-	public void setId(long id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 
@@ -122,11 +122,11 @@ public class Codigo {
 		this.codigoTraducido = codigoTraducido;
 	}
 
-	public long getClienteId() {
+	public Long getClienteId() {
 		return clienteId;
 	}
 
-	public void setClienteId(long clienteId) {
+	public void setClienteId(Long clienteId) {
 		this.clienteId = clienteId;
 	}
 
