@@ -28,7 +28,44 @@
   width: 100%;
   max-width: 420px;
 }
+.btn-create{
+  background: black;
+  cursor: pointer;
+  border: none;
+  padding: 12px 32px;
+  color: white;
+  font-size: 15px;
+  font-weight: bold;
+  position: relative;
+  border-radius: 12px;
+  z-index: 0;
+  letter-spacing: 0.06em;
+  overflow: hidden;
+}
+.btn-create::before {
+  content: '';
+  position: absolute;
+  top: -8px;
+  left: -8px;
+  z-index: -1;
+  width: calc(100% + 16px);
+  height: calc(100% + 16px);
+  background: linear-gradient(45deg, #bf5fff, #00cfff, #bf5fff, #6a00ff, #00cfff, #bf5fff, #6a00ff, #00cfff, #bf5fff);
+  background-size: 300%;
+  border-radius: 10px;
+  filter: blur(10px);
+  opacity: 0.7;
+  animation: glowing 20s linear infinite;
+  transition: opacity 0.4s ease;
 
+
+}
+
+@keyframes glowing {
+  0%   { background-position: 0 0; }
+  50%  { background-position: 400% 0; }
+  100% { background-position: 0 0; }
+}
 @media (max-width: 768px) {
   .login-container { flex-direction: column; }
   .side-brand { height: 30vh; }
