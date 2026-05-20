@@ -7,6 +7,7 @@ import { Registro } from './registro/registro';
 import { Perfil } from './perfil/perfil';
 import { Admin } from './admin/admin';
 import { AdminLogin } from './admin-login/admin-login';
+import { Auditoria } from './auditoria/auditoria';
 
 const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },
@@ -17,8 +18,10 @@ const routes: Routes = [
   { path: 'perfil', component: Perfil },
   { path: 'admin', component: Admin },
   { path: 'admin-login', component: AdminLogin },
+  { path: 'auditoria', component: Auditoria },
   { path: '**', redirectTo: '/login' }
 ];
+
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
   exports: [RouterModule]

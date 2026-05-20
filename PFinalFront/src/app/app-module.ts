@@ -11,9 +11,20 @@ import { Registro } from './registro/registro';
 import { Perfil } from './perfil/perfil';
 import { Admin } from './admin/admin';
 import { AdminLogin } from './admin-login/admin-login';
+import { Auditoria } from './auditoria/auditoria';
 
 @NgModule({
-  declarations: [App, LogIn, Traductor, Runcode, Registro, Perfil, Admin, AdminLogin],
+  declarations: [
+    App,
+    LogIn,
+    Traductor,
+    Runcode,
+    Registro,
+    Perfil,
+    Admin,
+    AdminLogin,
+    Auditoria,
+  ],
   imports: [BrowserModule, AppRoutingModule, FormsModule],
   providers: [provideHttpClient()],
   bootstrap: [App],
