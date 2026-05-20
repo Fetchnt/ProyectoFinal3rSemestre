@@ -21,8 +21,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
 @RequestMapping("/api/codigo")
-@CrossOrigin(origins = "*", methods = { RequestMethod.GET, RequestMethod.POST, RequestMethod.DELETE,
-		RequestMethod.PUT })
+@CrossOrigin(origins = { "http://localhost:4200", "http://localhost:8080", "*" })
 @Tag(name = "Traductor de Código", description = "Endpoints para traducción de código entre lenguajes")
 public class CodigoController {
 
