@@ -14,9 +14,6 @@ import co.edu.unbosque.proyectofinal.dto.CodigoDTO;
 import co.edu.unbosque.proyectofinal.entity.Codigo;
 import co.edu.unbosque.proyectofinal.repository.CodigoRepository;
 import co.edu.unbosque.proyectofinal.service.ai.AiProvider;
-import co.edu.unbosque.proyectofinal.service.ai.DeepSeekProvider;
-import co.edu.unbosque.proyectofinal.service.ai.GeminiProvider;
-import co.edu.unbosque.proyectofinal.service.ai.GroqProvider;
 import co.edu.unbosque.proyectofinal.service.ai.MistralProvider;
 import co.edu.unbosque.proyectofinal.service.ai.NvidiaProvider;
 import co.edu.unbosque.proyectofinal.service.ai.QwenProvider;
@@ -27,13 +24,7 @@ public class CodigoService implements CRUDOPERATION<CodigoDTO> {
 	@Autowired
 	private CodigoRepository codigoRepository;
 	@Autowired
-	private GeminiProvider geminiProvider;
-	@Autowired
-	private DeepSeekProvider deepSeekProvider;
-	@Autowired
 	private QwenProvider qwenProvider;
-	@Autowired
-	private GroqProvider groqProvider;
 	@Autowired
 	private NvidiaProvider nvidiaProvider;
 	@Autowired
@@ -43,16 +34,9 @@ public class CodigoService implements CRUDOPERATION<CodigoDTO> {
 	@Autowired
 	private Gson gson;
 
-	// ─────────────────────────────────────────────
-	// TRADUCCIÓN
-	// ─────────────────────────────────────────────
-
 	public CodigoDTO traducirConTodasLasIAs(CodigoDTO dto) {
 		ArrayList<CodigoDTO> resultados = new ArrayList<>();
-		resultados.add(llamarProveedor(dto, geminiProvider));
-		resultados.add(llamarProveedor(dto, deepSeekProvider));
 		resultados.add(llamarProveedor(dto, qwenProvider));
-		resultados.add(llamarProveedor(dto, groqProvider));
 		resultados.add(llamarProveedor(dto, nvidiaProvider));
 		resultados.add(llamarProveedor(dto, mistralProvider));
 		dto.setInteligenciasUsadas(resultados);
@@ -64,15 +48,9 @@ public class CodigoService implements CRUDOPERATION<CodigoDTO> {
 		AiProvider proveedorSeleccionado = null;
 
 		if (nombreProveedor == null || nombreProveedor.isBlank()) {
-			proveedorSeleccionado = geminiProvider;
-		} else if (nombreProveedor.equalsIgnoreCase("deepseek")) {
-			proveedorSeleccionado = deepSeekProvider;
+			proveedorSeleccionado = mistralProvider;
 		} else if (nombreProveedor.equalsIgnoreCase("qwen")) {
 			proveedorSeleccionado = qwenProvider;
-		} else if (nombreProveedor.equalsIgnoreCase("gemini")) {
-			proveedorSeleccionado = geminiProvider;
-		} else if (nombreProveedor.equalsIgnoreCase("groq")) {
-			proveedorSeleccionado = groqProvider;
 		}else if(nombreProveedor.equalsIgnoreCase("nvidia")) {
 			proveedorSeleccionado = nvidiaProvider;
 		}else if(nombreProveedor.equalsIgnoreCase("mistral")) {
@@ -124,7 +102,7 @@ public class CodigoService implements CRUDOPERATION<CodigoDTO> {
 	}
 
 	public List<String> getProveedoresDisponibles() {
-		return List.of(geminiProvider.getNombre(), deepSeekProvider.getNombre(), qwenProvider.getNombre());
+		return List.of(qwenProvider.getNombre(), nvidiaProvider.getNombre(), mistralProvider.getNombre());
 	}
 
 	public List<String> getLenguajesSoportados() {
