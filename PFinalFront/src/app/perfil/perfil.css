@@ -1,0 +1,25 @@
+.avatar-circle {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.historial-card {
+  transition: box-shadow 0.2s, transform 0.2s;
+}
+
+.historial-card:hover {
+  box-shadow: 4px 4px 0 #000 !important;
+  transform: translateY(-2px);
+}
+
+.code-preview {
+  max-height: 70px;
+  overflow: hidden;
+  font-size: 12px;
+  font-family: 'SFMono-Regular', Consolas, monospace;
+}

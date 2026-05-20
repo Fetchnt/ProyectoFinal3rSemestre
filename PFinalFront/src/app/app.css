@@ -1,0 +1,36 @@
+.navbar {
+  display: flex;
+  align-items: center;
+  padding: 1rem 2rem;
+  background-color: #000000;
+  color: white;
+}
+
+.nav-links {
+  display: flex;
+  gap: 40px;
+  margin: 0;
+  padding: 0;
+  align-items: center;
+}
+
+.nav-links div {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.nav-links a {
+  text-decoration: none;
+  color: white;
+  font-weight: 500;
+  transition: color 0.3s;
+}
+
+.nav-links a:hover {
+  color: #007bff;
+}
+
+
+
+

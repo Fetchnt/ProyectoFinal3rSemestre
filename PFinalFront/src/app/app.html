@@ -1,0 +1,14 @@
+<nav class="navbar">
+  <div class="logo">CodeTranslate</div>
+  <ul class="nav-links">
+    <div><i class="bi bi-person-circle"></i> <a routerLink="/login" routerLinkActive="active">Usuario</a></div>
+    <div><i class="bi bi-shield-lock"></i> <a routerLink="/admin-login" routerLinkActive="active">Admin</a></div>
+    <div><i class="bi bi-file-earmark-font"></i> <a routerLink="/traductor" routerLinkActive="active">Traductor</a></div>
+    <div><i class="bi bi-braces"></i> <a routerLink="/runcode" routerLinkActive="active">Ejecutar Código</a></div>
+    <div><i class="bi bi-person-circle"></i> <a routerLink="/perfil" routerLinkActive="active">Mi Perfil</a></div>
+  </ul>
+</nav>
+
+<main class="container">
+  <router-outlet></router-outlet>
+</main>
