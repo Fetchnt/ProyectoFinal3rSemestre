@@ -76,7 +76,7 @@ public class GroqProvider implements AiProvider {
 
 	private String construirPrompt(String codigo, String origen, String destino) {
 		return String.format(
-				"Translate the following %s source code to %s. Return ONLY the translated code, no markdown, no explanations:\n\n%s",
+				"Translate the following %s source code to %s. Return ONLY the translated code, no markdown, no explanations:%n%n%s",
 				origen, destino, codigo);
 	}
 
