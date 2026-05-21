@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-perfil',
@@ -6,4 +7,10 @@ import { Component } from '@angular/core';
   templateUrl: './perfil.html',
   styleUrl: './perfil.css',
 })
-export class Perfil {}
+export class Perfil {
+  constructor(private location: Location) {}
+
+  goBack(): void {
+    this.location.back();
+  }
+}
