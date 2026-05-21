@@ -78,7 +78,6 @@ public class UsuarioService implements CRUDOPERATION<UsuarioDTO> {
 		entity.setVerificado(false);
 		entity.setRol(Rol.USUARIO);
 		uRep.save(entity);
-		aService.guardar(data.getUsuario(), "create");
 		return 0;
 	}
 
@@ -161,7 +160,6 @@ public class UsuarioService implements CRUDOPERATION<UsuarioDTO> {
 		}
 		UserDetails userDetails = org.springframework.security.core.userdetails.User.withUsername(cliente.getUsuario())
 				.password(cliente.getContrasenia()).roles(cliente.getRol().name()).build();
-		aService.guardar(encontrado.get().getUsuario(), "login");
 		return jwtUtil.generateToken(cliente);
 	}
 
@@ -186,7 +184,6 @@ public class UsuarioService implements CRUDOPERATION<UsuarioDTO> {
 				+ "Ingrésalo en la aplicación para activar tu cuenta.\n\n" + "Saludos.");
 		try {
 			mailSender.send(message);
-			aService.guardar(encontrado.get().getUsuario(), "login");
 			return true;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -213,7 +210,6 @@ public class UsuarioService implements CRUDOPERATION<UsuarioDTO> {
 		}
 		cliente.setVerificado(true);
 		cliente.setCodigoVerificacion(null);
-		aService.guardar(encontrado.get().getUsuario(), "login");
 		uRep.save(cliente);
 		return true;
 	}
