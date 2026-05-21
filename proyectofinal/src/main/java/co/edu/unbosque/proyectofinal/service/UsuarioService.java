@@ -220,4 +220,8 @@ public class UsuarioService implements CRUDOPERATION<UsuarioDTO> {
 			return "desconocido";
 		return encontrado.get().getUsuario();
 	}
+	public Long obtenerIdPorUsuario(String username) {
+		Optional<Usuario> encontrado = uRep.findByUsuario(username);
+		return encontrado.get().getId();
+	}
 }

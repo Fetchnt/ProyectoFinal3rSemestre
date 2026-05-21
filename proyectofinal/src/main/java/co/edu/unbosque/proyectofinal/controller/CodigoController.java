@@ -3,11 +3,13 @@ package co.edu.unbosque.proyectofinal.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import co.edu.unbosque.proyectofinal.dto.CodigoDTO;
 import co.edu.unbosque.proyectofinal.service.CodigoService;
 import co.edu.unbosque.proyectofinal.service.Judge0Service;
 import co.edu.unbosque.proyectofinal.service.AuditoriaService;
+import co.edu.unbosque.proyectofinal.service.UsuarioService;
 import io.swagger.v3.oas.annotations.Operation;
 
 @RestController
@@ -20,24 +22,28 @@ public class CodigoController {
 	private Judge0Service judge0Service;
 	@Autowired
 	private AuditoriaService auditoriaService;
+	@Autowired
+	private UsuarioService usuarioService;
 
 	@PostMapping("/traducir/todas")
 	public ResponseEntity<CodigoDTO> traducirConTodas(@RequestBody CodigoDTO dto) {
-		String nombreUsuario = codigoService.getByClienteId(dto.getClienteId());
-		dto.setUsuarioSolicitud(nombreUsuario);
+		String username = SecurityContextHolder.getContext().getAuthentication().getName();
+		dto.setClienteId(usuarioService.obtenerIdPorUsuario(username));
+		dto.setUsuarioSolicitud(username);
 		CodigoDTO resultado = codigoService.traducirConTodasLasIAs(dto);
-		auditoriaService.registrar("/codigo/traducir/todas", "POST",
-				"Traducción con todas las IAs por: " + nombreUsuario, 200);
+		auditoriaService.registrar("/codigo/traducir/todas", "POST", "Traducción con todas las IAs por: " + username,
+				200);
 		return new ResponseEntity<>(resultado, HttpStatus.OK);
 	}
 
 	@PostMapping("/traducir")
 	public ResponseEntity<CodigoDTO> traducirConProveedor(@RequestBody CodigoDTO dto) {
-		String nombreUsuario = codigoService.getByClienteId(dto.getClienteId());
-		dto.setUsuarioSolicitud(nombreUsuario);
+		String username = SecurityContextHolder.getContext().getAuthentication().getName();
+		dto.setClienteId(usuarioService.obtenerIdPorUsuario(username));
+		dto.setUsuarioSolicitud(username);
 		CodigoDTO resultado = codigoService.traducirConProveedorEspecifico(dto, dto.getProveedorIA());
 		auditoriaService.registrar("/codigo/traducir", "POST",
-				"Traducción con " + dto.getProveedorIA() + " por: " + nombreUsuario, 200);
+				"Traducción con " + dto.getProveedorIA() + " por: " + username, 200);
 		return new ResponseEntity<>(resultado, HttpStatus.OK);
 	}
 
@@ -56,10 +62,11 @@ public class CodigoController {
 	}
 
 	@GetMapping("/historial")
-	public ResponseEntity<String> historial(@RequestBody CodigoDTO dto) {
-		String historial = codigoService.getByClienteId(dto.getClienteId());
-		auditoriaService.registrar("/codigo/historial", "GET", "Historial consultado clienteId: " + dto.getClienteId(),
-				200);
+	public ResponseEntity<String> historial() {
+		String username = SecurityContextHolder.getContext().getAuthentication().getName();
+		Long clienteId = usuarioService.obtenerIdPorUsuario(username);
+		String historial = codigoService.getByClienteId(clienteId);
+		auditoriaService.registrar("/codigo/historial", "GET", "Historial consultado por: " + username, 200);
 		return new ResponseEntity<>(historial, HttpStatus.OK);
 	}
 
