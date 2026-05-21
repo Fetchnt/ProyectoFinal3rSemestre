@@ -40,6 +40,7 @@ public class CodigoService implements CRUDOPERATION<CodigoDTO> {
 		resultados.add(llamarProveedor(dto, nvidiaProvider));
 		resultados.add(llamarProveedor(dto, mistralProvider));
 		dto.setInteligenciasUsadas(resultados);
+		
 		return dto;
 	}
 
