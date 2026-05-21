@@ -42,7 +42,7 @@ public class UsuarioService implements CRUDOPERATION<UsuarioDTO> {
 
 	@Autowired
 	private PasswordEncoder passwordEncoder;
-	
+
 	@Autowired
 	private AuditoriaService aService;
 
@@ -141,7 +141,7 @@ public class UsuarioService implements CRUDOPERATION<UsuarioDTO> {
 		cliente.setUsuario(data.getUsuario());
 		cliente.setContrasenia(passwordEncoder.encode(data.getContrasenia()));
 		cliente.setCorreo(data.getCorreo());
-		
+
 		uRep.save(cliente);
 		return 0;
 	}
@@ -220,9 +220,13 @@ public class UsuarioService implements CRUDOPERATION<UsuarioDTO> {
 			return "desconocido";
 		return encontrado.get().getUsuario();
 	}
+
 	public Long obtenerIdPorUsuario(String username) {
 		Optional<Usuario> encontrado = uRep.findByUsuario(username);
-		Long id = encontrado.get().getId();
-		return id;
+		if (encontrado.isPresent()) {
+			Long id = encontrado.get().getId();
+			return id;
+		}
+		return null;
 	}
 }
