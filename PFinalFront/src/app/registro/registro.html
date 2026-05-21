@@ -1,5 +1,4 @@
 <div class="login-container">
-
   <div class="side-brand">
     <div class="brand-wrapper">
       <i class="bi bi-terminal-fill display-1"></i>
@@ -27,56 +26,56 @@
       <h2 class="mb-1 fw-bold">Crear cuenta</h2>
       <p class="text-muted small mb-4">Regístrate para guardar tu historial</p>
 
-      <div class="row g-3 mb-3">
-        <div class="col-6">
-          <label class="form-label text-uppercase small fw-bold">Nombre</label>
-          <input type="text" class="form-control" placeholder="Juan">
+      <form #registroForm="ngForm" (ngSubmit)="registrar(registroForm)" *ngIf="paso === 1">
+        <div class="mb-3">
+          <label class="form-label text-uppercase small fw-bold">Username</label>
+          <div class="input-group">
+            <span class="input-group-text bg-white"><i class="bi bi-person"></i></span>
+            <input type="text" class="form-control" placeholder="usuario123"
+                   name="usuario" [(ngModel)]="formulario.usuario" required>
+          </div>
         </div>
-        <div class="col-6">
-          <label class="form-label text-uppercase small fw-bold">Apellido</label>
-          <input type="text" class="form-control" placeholder="Pérez">
+        <div class="mb-3">
+          <label class="form-label text-uppercase small fw-bold">Correo</label>
+          <div class="input-group">
+            <span class="input-group-text bg-white"><i class="bi bi-envelope"></i></span>
+            <input type="email" class="form-control" placeholder="correo@ejemplo.com"
+                   name="correo" [(ngModel)]="formulario.correo" required>
+          </div>
         </div>
+        <div class="mb-4">
+          <label class="form-label text-uppercase small fw-bold">Contraseña</label>
+          <div class="input-group">
+            <span class="input-group-text bg-white"><i class="bi bi-lock"></i></span>
+            <input type="password" class="form-control" placeholder="••••••••"
+                   name="contrasenia" [(ngModel)]="formulario.contrasenia" required>
+          </div>
+        </div>
+        <div *ngIf="mensajeError" class="alert alert-danger py-2 small">{{ mensajeError }}</div>
+        <button type="submit" class="btn-create" [disabled]="cargando">
+          {{ cargando ? 'Registrando...' : 'CREAR CUENTA' }} <i class="bi bi-arrow-right ms-2"></i>
+        </button>
+        <p class="text-center mt-3 small">
+          ¿Ya tienes cuenta? <a routerLink="/login">Inicia sesión</a>
+        </p>
+      </form>
+
+      <div *ngIf="paso === 2">
+        <div class="alert alert-info py-2 small">{{ mensajeExito }}</div>
+        <div class="mb-3">
+          <label class="form-label text-uppercase small fw-bold">Código de verificación</label>
+          <div class="input-group">
+            <span class="input-group-text bg-white"><i class="bi bi-key"></i></span>
+            <input type="text" class="form-control" placeholder="123456"
+                   [(ngModel)]="formulario.codigoVerificacion">
+          </div>
+        </div>
+        <div *ngIf="mensajeError" class="alert alert-danger py-2 small">{{ mensajeError }}</div>
+        <button class="btn-create" (click)="verificar()" [disabled]="cargando">
+          {{ cargando ? 'Verificando...' : 'VERIFICAR CUENTA' }} <i class="bi bi-check ms-2"></i>
+        </button>
       </div>
 
-      <div class="mb-3">
-        <label class="form-label text-uppercase small fw-bold">Username</label>
-        <div class="input-group">
-          <span class="input-group-text bg-white"><i class="bi bi-person"></i></span>
-          <input type="text" class="form-control" placeholder="usuario123">
-        </div>
-      </div>
-
-      <div class="mb-3">
-        <label class="form-label text-uppercase small fw-bold">Correo electrónico</label>
-        <div class="input-group">
-          <span class="input-group-text bg-white"><i class="bi bi-envelope"></i></span>
-          <input type="email" class="form-control" placeholder="correo@ejemplo.com">
-        </div>
-      </div>
-
-      <div class="mb-3">
-        <label class="form-label text-uppercase small fw-bold">Contraseña</label>
-        <div class="input-group">
-          <span class="input-group-text bg-white"><i class="bi bi-lock"></i></span>
-          <input type="password" class="form-control" placeholder="••••••••">
-        </div>
-      </div>
-
-      <div class="mb-4">
-        <label class="form-label text-uppercase small fw-bold">Confirmar contraseña</label>
-        <div class="input-group">
-          <span class="input-group-text bg-white"><i class="bi bi-lock-fill"></i></span>
-          <input type="password" class="form-control" placeholder="••••••••">
-        </div>
-      </div>
-
-      <button class="btn btn-primary w-100 py-3 fw-bold">
-        CREAR CUENTA <i class="bi bi-arrow-right ms-2"></i>
-      </button>
-
-      <p class="text-center mt-3 small">
-        ¿Ya tienes cuenta? <a routerLink="/login">Inicia sesión</a>
-      </p>
     </div>
   </div>
 </div>

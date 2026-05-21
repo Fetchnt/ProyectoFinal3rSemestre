@@ -4,11 +4,10 @@
       <i class="bi bi-terminal-fill display-1"></i>
       <h1 class="mt-4">CODE  TRANSLATE</h1>
       <p class="lead">Traduce y ejecuta tu código con IA.</p>
-
       <div class="features mt-5">
         <div class="d-flex align-items-center mb-3">
           <i class="bi bi-lightning-charge me-3"></i>
-          <span>Traducion instantánea</span>
+          <span>Traduccion instantánea</span>
         </div>
       </div>
     </div>
@@ -17,32 +16,37 @@
   <div class="side-form">
     <div class="form-wrapper">
       <h2 class="mb-4 fw-bold">Bienvenido</h2>
-      <form>
+      <form #loginForm="ngForm" (ngSubmit)="enviarFormulario(loginForm)">
         <div class="mb-3">
           <label class="form-label text-uppercase small fw-bold">Usuario</label>
           <div class="input-group">
             <span class="input-group-text bg-white"><i class="bi bi-person"></i></span>
-            <input type="text" class="form-control" placeholder="Usuario">
+            <input type="text" class="form-control" placeholder="Usuario"
+                   name="usuario" [(ngModel)]="formulario.usuario" required>
           </div>
         </div>
         <div class="mb-4">
           <label class="form-label text-uppercase small fw-bold">Contraseña</label>
           <div class="input-group">
             <span class="input-group-text bg-white"><i class="bi bi-lock"></i></span>
-            <input type="password" class="form-control" placeholder="••••••••">
+            <input [type]="mostrarContrasenia ? 'text' : 'password'" class="form-control" placeholder="••••••••"
+                   name="contrasenia" [(ngModel)]="formulario.contrasenia" required>
           </div>
         </div>
-        <button class="btn btn-primary w-100 py-3 fw-bold">INGRESAR <i class="bi bi-arrow-right ms-2"></i></button>
+        <div *ngIf="mensajeError" class="alert alert-danger py-2 small">{{ mensajeError }}</div>
+        <div *ngIf="mensajeExito" class="alert alert-success py-2 small">{{ mensajeExito }}</div>
+        <button type="submit" class="btn-ingresar" [disabled]="cargando">
+          {{ cargando ? 'Ingresando...' : 'INGRESAR' }} <i class="bi bi-arrow-right ms-2"></i>
+        </button>
         <hr class="my-4 border-secondary">
-
         <div class="text-center">
           <p class="text-muted small mb-2">¿Eres administrador?</p>
-          <a routerLink="/admin-login" class="btn btn-outline-dark rounded-0 w-100 py-2 fw-bold">
+          <a routerLink="/admin-login" class="btn-admin">
             <i class="bi bi-shield-lock me-2"></i>Acceso Administrador
           </a>
         </div>
         <p class="text-center mt-3 small">
-          ¿No tienes cuenta? <a href="/registro" style="color: #000; font-weight: 600; text-decoration: underline;">Regístrate aquí</a>
+          ¿No tienes cuenta? <a href="/registro" class="link-registro">Regístrate aquí</a>
         </p>
       </form>
     </div>

@@ -28,8 +28,62 @@
   width: 100%;
   max-width: 400px;
 }
+.brand-icon {
+  font-size: 4rem;
+  color: #8f0707;
+}
 
+.brand-title {
+  letter-spacing: 2px;
+}
+
+.brand-subtitle {
+  color: #aaa;
+}
+
+.feature-list {
+  color: #555;
+  font-size: 0.85rem;
+}
+
+.list-icon {
+  color: #888;
+}
+
+.admin-badge {
+  font-size: 0.75rem;
+  letter-spacing: 1px;
+}
+
+.back-link {
+  color: #000;
+  text-decoration: underline;
+}
+
+
+
+.btn-ingad {
+  background: rgb(143, 7, 7);
+  border: black;
+  padding: 12px 32px;
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: bold;
+  position: relative;
+  border-radius: 10px;
+  z-index: 0;
+  letter-spacing: 0.06em;
+  overflow: hidden;
+}
+
+  @keyframes glowing {
+    0%   { background-position: 0 0; }
+    50%  { background-position: 800% 0; }
+    100% { background-position: 0 0; }
+  }
 @media (max-width: 768px) {
   .login-container { flex-direction: column; }
   .side-brand { height: 30vh; }
 }
+
+

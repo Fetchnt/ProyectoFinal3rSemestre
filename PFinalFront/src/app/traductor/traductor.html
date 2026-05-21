@@ -1,22 +1,40 @@
+<div class="traductor-topbar px-4 py-2 border-bottom border-dark border-2">
+  <a routerLink="/login" class="btn btn-outline-dark rounded-0 btn-sm d-inline-flex align-items-center gap-2">
+    <i class="bi bi-arrow-left"></i> Volver al login
+  </a>
+</div>
 <div class="wrap">
   <div class="box row g-0">
 
     <div class="src col-md-5 p-4">
       <div class="mb-4">
         <label class="lbl fw-bold small d-block mb-2 text-muted">LENGUAJE ORIGEN</label>
-        <select class="sel form-select border-0 border-bottom border-dark rounded-0 px-0 fw-bold">
-          <option selected disabled>Elegir lenguaje...</option>
-          <option>Python</option><option>JavaScript</option><option>Java</option>
-          <option>C#</option><option>C++</option><option>TypeScript</option>
-          <option>Go</option><option>Rust</option><option>PHP</option><option>Swift</option>
+        <select class="sel form-select border-0 border-bottom border-dark rounded-0 px-0 fw-bold"
+                [(ngModel)]="lenguajeOrigen">
+          <option disabled value="">Elegir lenguaje...</option>
+          <option *ngFor="let lang of lenguajes" [value]="lang">{{ lang }}</option>
         </select>
       </div>
-      <textarea class="code form-control font-code border-0 bg-light" rows="12" placeholder="Pega el código que quieres traducir aqui."></textarea>
+      <textarea class="code form-control font-code border-0 bg-light" rows="12"
+                placeholder="Pega el código que quieres traducir aqui."
+                [(ngModel)]="codigoEntrada"></textarea>
     </div>
 
     <div class="mid col-md-2 bg-dark d-flex flex-column align-items-center justify-content-center p-3">
-      <button class="glow-btn w-100 mb-2"> TRADUCIR</button>
-      <button class="swap-btn btn btn-outline-light rounded-0 w-100 small py-1">
+      <div class="mb-2">
+        <label class="text-white small fw-bold d-block mb-1 text-center">PROVEEDOR IA</label>
+        <select class="form-select form-select-sm rounded-0 border-0"
+                [(ngModel)]="proveedorSeleccionado">
+          <option disabled value="">Elegir...</option>
+          <option *ngFor="let p of proveedores" [value]="p">{{ p }}</option>
+        </select>
+      </div>
+      <button class="glow-btn w-100 mb-2"
+              (click)="traducir()" [disabled]="!puedeTraducir() || traduciendo">
+        {{ traduciendo ? 'TRADUCIENDO...' : 'TRADUCIR' }}
+      </button>
+      <button class="swap-btn btn btn-outline-light rounded-0 w-100 small py-1"
+              (click)="intercambiarLenguajes()">
         <i class="bi bi-arrow-left-right"></i>
       </button>
     </div>
@@ -24,16 +42,21 @@
     <div class="tgt col-md-5 p-4 border-start border-dark">
       <div class="mb-4">
         <label class="lbl fw-bold small d-block mb-2 text-muted">LENGUAJE DESTINO</label>
-        <select class="sel form-select border-0 border-bottom border-dark rounded-0 px-0 fw-bold">
-          <option selected disabled>Elegir lenguaje...</option>
-          <option>Python</option><option>JavaScript</option><option>Java</option>
-          <option>C#</option><option>C++</option><option>TypeScript</option>
-          <option>Go</option><option>Rust</option><option>PHP</option><option>Swift</option>
+        <select class="sel form-select border-0 border-bottom border-dark rounded-0 px-0 fw-bold"
+                [(ngModel)]="lenguajeDestino">
+          <option disabled value="">Elegir lenguaje...</option>
+          <option *ngFor="let lang of lenguajes" [value]="lang">{{ lang }}</option>
         </select>
       </div>
-      <textarea class="code form-control font-code border-0 bg-light" rows="12" placeholder="Tu codigo traducido se mostrara aqui." readonly></textarea>
+      <textarea class="code form-control font-code border-0 bg-light" rows="12"
+                placeholder="Tu codigo traducido se mostrara aqui."
+                [value]="codigoSalida" readonly></textarea>
+      <div *ngIf="mensajeError" class="alert alert-danger py-2 small mt-2">{{ mensajeError }}</div>
       <div class="text-end mt-3">
-        <button class="copy-btn btn btn-outline-dark btn-sm rounded-0"><i class="bi bi-copy"></i> COPIAR</button>
+        <button class="copy-btn btn btn-outline-dark btn-sm rounded-0"
+                (click)="copiarSalida()" [disabled]="!codigoSalida">
+          <i class="bi bi-copy"></i> {{ copiado ? 'COPIADO' : 'COPIAR' }}
+        </button>
       </div>
     </div>
 

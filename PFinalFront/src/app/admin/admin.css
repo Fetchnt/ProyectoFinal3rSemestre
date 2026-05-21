@@ -5,13 +5,16 @@
   box-shadow: 6px 6px 0 #000 !important;
   transform: translateY(-3px);
 }
-
+.head{
+  color: #ffffff;
+}
 .admin-table thead th {
   font-size: 0.72rem;
-  letter-spacing: 1px;
+  letter-spacing: 4px;
   text-transform: uppercase;
-  font-weight: 600;
+  font-weight: 900;
   border: none;
+
 }
 .admin-table tbody tr {
   border-bottom: 1px solid #ddd;
@@ -35,4 +38,52 @@
   border-radius: 50%;
   font-size: 14px;
   flex-shrink: 0;
+}
+
+.no-caret::after {
+  display: none !important;
+}
+
+.panel-crear-admin {
+  width: 320px;
+  box-shadow: 6px 6px 0 #000 !important;
+  margin-top: 8px !important;
+}
+
+.panel-crear-admin input:focus {
+  border-color: #000 !important;
+  box-shadow: none !important;
+}
+
+.boton-retorno-flotante {
+  box-shadow: 4px 4px 0 #000;
+  transition: transform 0.15s, box-shadow 0.15s, background-color 0.15s;
+}
+.boton-retorno-flotante:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0 #000 !important;
+  background-color: #212529;
+  color: #fff;
+}
+
+.delay-1 { animation-delay: 0.1s; }
+.delay-2 { animation-delay: 0.2s; }
+.delay-3 { animation-delay: 0.3s; }
+
+.user-handle {
+  font-size: 11px;
+}
+
+.label-xs {
+  font-size: 10px;
+}
+
+.text-subtle {
+  color: #aaa;
+}
+
+.code-mini {
+  font-size: 11px;
+  max-height: 35px;
+  overflow: hidden;
 }
