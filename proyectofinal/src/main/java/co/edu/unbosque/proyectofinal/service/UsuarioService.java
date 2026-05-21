@@ -222,6 +222,7 @@ public class UsuarioService implements CRUDOPERATION<UsuarioDTO> {
 	}
 	public Long obtenerIdPorUsuario(String username) {
 		Optional<Usuario> encontrado = uRep.findByUsuario(username);
-		return encontrado.get().getId();
+		Long id = encontrado.get().getId();
+		return id;
 	}
 }
