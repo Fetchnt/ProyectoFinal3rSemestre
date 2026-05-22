@@ -40,6 +40,7 @@ public class CodigoService implements CRUDOPERATION<CodigoDTO> {
 		resultados.add(llamarProveedor(dto, nvidiaProvider));
 		resultados.add(llamarProveedor(dto, mistralProvider));
 		dto.setInteligenciasUsadas(resultados);
+		
 		return dto;
 	}
 
@@ -91,6 +92,7 @@ public class CodigoService implements CRUDOPERATION<CodigoDTO> {
 			entidad.setProveedorIA(provider.getNombre());
 			entidad.setExitoso(true);
 			entidad.setFechaCreacion(LocalDateTime.now());
+			entidad.setClienteId(dto.getClienteId());
 			codigoRepository.save(entidad);
 
 		} catch (Exception e) {

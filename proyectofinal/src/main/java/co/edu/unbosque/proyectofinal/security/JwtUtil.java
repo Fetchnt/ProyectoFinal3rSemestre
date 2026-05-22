@@ -122,7 +122,6 @@ public class JwtUtil {
 		if (userDetails instanceof Usuario) {
 			Usuario user = (Usuario) userDetails;
 			claims.put("role", user.getRol().name());
-			claims.put("id", user.getId());
 		}
 
 		return createToken(claims, userDetails.getUsername());
