@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Location } from '@angular/common';
+import { Router } from '@angular/router';
 import { CodigoService } from '../services/codigo.service';
 import { AuthService } from '../services/auth.service';
 
@@ -17,6 +18,7 @@ export class Perfil implements OnInit {
 
   constructor(
     private location: Location,
+    private router: Router,
     private codigoService: CodigoService,
     private authService: AuthService
   ) {}
@@ -31,5 +33,10 @@ export class Perfil implements OnInit {
 
   volver(): void {
     this.location.back();
+  }
+
+  cerrarSesion(): void {
+    this.authService.cerrarSesion();
+    this.router.navigate(['/login']);
   }
 }

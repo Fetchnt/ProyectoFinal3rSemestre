@@ -11,7 +11,7 @@ import { AuthService } from '../services/auth.service';
 })
 export class LogIn {
 
-  formulario = { usuario: '', contrasenia: '' };
+  formulario = { usuario: '', contrasenia: '', correo: '' };
   mostrarContrasenia = false;
   cargando = false;
   mensajeError = '';
@@ -27,7 +27,7 @@ export class LogIn {
     this.cargando = true;
     this.mensajeError = '';
 
-    this.authService.iniciarSesion(this.formulario.usuario, this.formulario.contrasenia).subscribe({
+    this.authService.iniciarSesion(this.formulario.usuario, this.formulario.contrasenia, this.formulario.correo).subscribe({
       next: (token) => {
         this.authService.guardarToken(token);
         const id = this.authService.obtenerIdDesdeToken();

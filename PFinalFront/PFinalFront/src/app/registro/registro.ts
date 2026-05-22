@@ -1,6 +1,6 @@
-import { Component, ChangeDetectorRef } from '@angular/core';
+import { Component, ChangeDetectorRef, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 
 @Component({
@@ -9,7 +9,7 @@ import { AuthService } from '../services/auth.service';
   templateUrl: './registro.html',
   styleUrls: ['./registro.css']
 })
-export class Registro {
+export class Registro implements OnInit {
 
   formulario = { usuario: '', contrasenia: '', correo: '', codigoVerificacion: '' };
   paso = 1;
@@ -20,8 +20,19 @@ export class Registro {
   constructor(
     private authService: AuthService,
     private router: Router,
+    private route: ActivatedRoute,
     private cdr: ChangeDetectorRef
   ) {}
+
+  ngOnInit(): void {
+    this.route.queryParams.subscribe(params => {
+      if (params['verificar'] === 'true') {
+        this.paso = 2;
+        this.mensajeExito = 'Ingresa el código que recibiste en tu correo.';
+        this.cdr.detectChanges();
+      }
+    });
+  }
 
   registrar(form: NgForm): void {
     if (form.invalid) return;

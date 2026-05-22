@@ -11,7 +11,7 @@ import { AuthService } from '../services/auth.service';
 })
 export class AdminLogin {
 
-  formulario = { usuario: '', contrasenia: '' };
+  formulario = { usuario: '', contrasenia: '', correo: '' };
   cargando = false;
   mensajeError = '';
 
@@ -22,7 +22,7 @@ export class AdminLogin {
     this.cargando = true;
     this.mensajeError = '';
 
-    this.authService.iniciarSesion(this.formulario.usuario, this.formulario.contrasenia).subscribe({
+    this.authService.iniciarSesion(this.formulario.usuario, this.formulario.contrasenia, this.formulario.correo).subscribe({
       next: (token) => {
         this.authService.guardarToken(token);
         this.cargando = false;

@@ -9,8 +9,8 @@ export class AuthService {
 
   constructor(private http: HttpClient) {}
 
-  iniciarSesion(usuario: string, contrasenia: string): Observable<string> {
-    return this.http.post(`${this.urlBase}/login`, { usuario, contrasenia }, { responseType: 'text' });
+  iniciarSesion(usuario: string, contrasenia: string, correo: string = ''): Observable<string> {
+    return this.http.post(`${this.urlBase}/login`, { usuario, contrasenia, correo }, { responseType: 'text' });
   }
 
   registrarUsuario(datos: any): Observable<string> {
