@@ -48,6 +48,9 @@
         <p class="text-center mt-3 small">
           ¿No tienes cuenta? <a href="/registro" class="link-registro">Regístrate aquí</a>
         </p>
+        <p class="text-center mt-2 small">
+          ¿Ya tienes código? <a routerLink="/registro" [queryParams]="{verificar: true}" class="link-registro">Verificar cuenta</a>
+        </p>
       </form>
     </div>
   </div>

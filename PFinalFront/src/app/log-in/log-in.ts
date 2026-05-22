@@ -44,7 +44,4 @@ export class LogIn {
     });
   }
 
-  alternarContrasenia(): void {
-    this.mostrarContrasenia = !this.mostrarContrasenia;
-  }
 }

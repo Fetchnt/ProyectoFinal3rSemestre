@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectorRef } from '@angular/core';
 import { CodigoService } from '../services/codigo.service';
 import { AuthService } from '../services/auth.service';
 
@@ -20,7 +20,11 @@ export class Runcode {
   lineasConsola: LineaConsola[] = [];
   ejecutando = false;
 
-  constructor(private codigoService: CodigoService, private authService: AuthService) {}
+  constructor(
+    private codigoService: CodigoService,
+    private authService: AuthService,
+    private cdr: ChangeDetectorRef
+  ) {}
 
   ejecutarCodigo(): void {
     if (!this.codigoEntrada.trim() || this.ejecutando) return;
@@ -41,11 +45,13 @@ export class Runcode {
       next: (resultado) => {
         this.lineasConsola.push({ tipo: 'salida', texto: resultado });
         this.ejecutando = false;
+        this.cdr.detectChanges();
         this.desplazarAbajo();
       },
       error: () => {
         this.lineasConsola.push({ tipo: 'error', texto: 'Error al ejecutar el código.' });
         this.ejecutando = false;
+        this.cdr.detectChanges();
       }
     });
   }
