@@ -10,4 +10,8 @@ class ProyectofinalApplicationTests {
 	void contextLoads() {
 	}
 
+	@Test
+	void exampleTestMethod() {
+
+	}
 }

@@ -1,12 +1,13 @@
 export interface CodigoModel {
-  usuarioSolicitud: string;
-  lenguajeRegistro: string;
+  id?: number;
+  usuarioSolicitud?: string;
+  lenguajeRecibido: string;
   lenguajeATraducir: string;
-  proveedorIA:string;
-  exitoso: boolean;
-  fechaCreacion: Date;
+  proveedorIA: string;
+  exitoso?: boolean;
+  fechaCreacion?: string;
   codigoRecibido: string;
-  codigoTraducido: string;
+  codigoTraducido?: string;
   clienteId: number;
-  inteligenciasUsadas: CodigoModel[];
+  inteligenciasUsadas?: CodigoModel[];
 }
