@@ -1,6 +1,7 @@
 package co.edu.unbosque.proyectofinal.dto;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -42,7 +43,7 @@ public class CodigoDTO {
 		this.fechaCreacion = fechaCreacion;
 		this.codigoRecibido = codigoRecibido;
 		this.codigoTraducido = codigoTraducido;
-		this.inteligenciasUsadas = inteligenciasUsadas;
+		this.inteligenciasUsadas = new ArrayList<>(inteligenciasUsadas);
 		this.clienteId = clienteId;
 	}
 
@@ -123,7 +124,7 @@ public class CodigoDTO {
 	}
 
 	public void setInteligenciasUsadas(List<CodigoDTO> inteligenciasUsadas) {
-		this.inteligenciasUsadas = inteligenciasUsadas;
+		this.inteligenciasUsadas = new ArrayList<>(inteligenciasUsadas);
 	}
 
 	public Long getClienteId() {
