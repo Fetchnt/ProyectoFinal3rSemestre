@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CodigoService } from '../services/codigo.service';
 import { AuthService } from '../services/auth.service';
 
@@ -12,7 +12,6 @@ export class Traductor implements OnInit {
 
   proveedores: string[] = [];
   lenguajes: string[] = [];
-
   proveedorSeleccionado = '';
   lenguajeOrigen = '';
   lenguajeDestino = '';
@@ -22,15 +21,19 @@ export class Traductor implements OnInit {
   copiado = false;
   mensajeError = '';
 
-  constructor(private codigoService: CodigoService, private authService: AuthService) {}
+  constructor(
+    private codigoService: CodigoService,
+    private authService: AuthService,
+    private cdr: ChangeDetectorRef
+  ) {}
 
   ngOnInit(): void {
     this.codigoService.getProveedores().subscribe({
-      next: (lista) => this.proveedores = lista,
+      next: (lista) => { this.proveedores = lista; this.cdr.detectChanges(); },
       error: () => this.proveedores = []
     });
     this.codigoService.getLenguajes().subscribe({
-      next: (lista) => this.lenguajes = lista,
+      next: (lista) => { this.lenguajes = lista; this.cdr.detectChanges(); },
       error: () => this.lenguajes = []
     });
   }
@@ -57,12 +60,25 @@ export class Traductor implements OnInit {
 
     this.codigoService.traducirConProveedor(peticion as any).subscribe({
       next: (resultado) => {
-        this.codigoSalida = resultado.codigoTraducido || '';
+        if (resultado.inteligenciasUsadas && resultado.inteligenciasUsadas.length > 0) {
+          const primera = resultado.inteligenciasUsadas[0];
+          if (primera.codigoRecibido && primera.codigoRecibido.startsWith('ERROR')) {
+            this.mensajeError = 'Error de la IA: ' + primera.codigoRecibido;
+            this.traduciendo = false;
+            this.cdr.detectChanges();
+            return;
+          }
+          this.codigoSalida = primera.codigoRecibido || '';
+        } else {
+          this.codigoSalida = resultado.codigoTraducido || '';
+        }
         this.traduciendo = false;
+        this.cdr.detectChanges();
       },
       error: () => {
-        this.mensajeError = 'Error al traducir. Verifica que el back esté corriendo.';
+        this.mensajeError = 'Error al traducir.';
         this.traduciendo = false;
+        this.cdr.detectChanges();
       }
     });
   }
@@ -71,7 +87,8 @@ export class Traductor implements OnInit {
     if (!this.codigoSalida) return;
     navigator.clipboard.writeText(this.codigoSalida).then(() => {
       this.copiado = true;
-      setTimeout(() => this.copiado = false, 2000);
+      this.cdr.detectChanges();
+      setTimeout(() => { this.copiado = false; this.cdr.detectChanges(); }, 2000);
     });
   }
 
