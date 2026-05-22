@@ -1,5 +1,6 @@
-// src/app/traductor/traductor.ts
-import { Component } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { CodigoService } from '../services/codigo.service';
+import { AuthService } from '../services/auth.service';
 
 @Component({
   standalone: false,
@@ -7,83 +8,99 @@ import { Component } from '@angular/core';
   templateUrl: './traductor.html',
   styleUrls: ['./traductor.css']
 })
-export class Traductor {
+export class Traductor implements OnInit {
 
-  aiModels = [
-    { id: 'gpt4', name: 'GPT-4o', provider: 'OpenAI' },
-    { id: 'claude', name: 'Claude 3.5 Sonnet', provider: 'Anthropic' },
-    { id: 'gemini', name: 'Gemini 1.5 Pro', provider: 'Google' },
-    { id: 'llama', name: 'Llama 3.1 70B', provider: 'Meta' },
-    { id: 'mistral', name: 'Mistral Large', provider: 'Mistral AI' },
-    { id: 'deepseek', name: 'DeepSeek Coder V2', provider: 'DeepSeek' }
-  ];
+  proveedores: string[] = [];
+  lenguajes: string[] = [];
+  proveedorSeleccionado = '';
+  lenguajeOrigen = '';
+  lenguajeDestino = '';
+  codigoEntrada = '';
+  codigoSalida = '';
+  traduciendo = false;
+  copiado = false;
+  mensajeError = '';
 
-  languages = [
-    'Python', 'JavaScript', 'TypeScript', 'Java', 'C',
-    'C++', 'C#', 'Go', 'Rust', 'Swift', 'Kotlin',
-    'PHP', 'Ruby', 'Scala', 'Dart', 'R', 'MATLAB',
-    'Bash', 'PowerShell', 'SQL', 'HTML/CSS'
-  ];
+  constructor(
+    private codigoService: CodigoService,
+    private authService: AuthService,
+    private cdr: ChangeDetectorRef
+  ) {}
 
-  selectedAI = '';
-  sourceLang = '';
-  targetLang = '';
-  inputCode = '';
-  outputCode = '';
-  isTranslating = false;
-  copied = false;
-  errorMessage = '';
-
-  get canTranslate(): boolean {
-    return !!this.selectedAI && !!this.sourceLang && !!this.targetLang
-      && !!this.inputCode.trim() && this.sourceLang !== this.targetLang;
-  }
-
-  translate(): void {
-    if (!this.canTranslate) return;
-
-    this.isTranslating = true;
-    this.errorMessage = '';
-    this.outputCode = '';
-
-    // Simulate API call
-    setTimeout(() => {
-      this.outputCode = `// Translated from ${this.sourceLang} to ${this.targetLang}\n// Using: ${this.getAIName()}\n\n${this.generateMockOutput()}`;
-      this.isTranslating = false;
-    }, 1500);
-  }
-
-  private getAIName(): string {
-    const ai = this.aiModels.find(a => a.id === this.selectedAI);
-    return ai ? `${ai.name} (${ai.provider})` : '';
-  }
-
-  private generateMockOutput(): string {
-    return `// [Aquí irá el código traducido a ${this.targetLang}]\n// Conecta tu API de IA para obtener traducciones reales`;
-  }
-
-  copyOutput(): void {
-    if (!this.outputCode) return;
-    navigator.clipboard.writeText(this.outputCode).then(() => {
-      this.copied = true;
-      setTimeout(() => this.copied = false, 2000);
+  ngOnInit(): void {
+    this.codigoService.getProveedores().subscribe({
+      next: (lista) => { this.proveedores = lista; this.cdr.detectChanges(); },
+      error: () => this.proveedores = []
+    });
+    this.codigoService.getLenguajes().subscribe({
+      next: (lista) => { this.lenguajes = lista; this.cdr.detectChanges(); },
+      error: () => this.lenguajes = []
     });
   }
 
-  clearAll(): void {
-    this.inputCode = '';
-    this.outputCode = '';
-    this.errorMessage = '';
+  puedeTraducir(): boolean {
+    return !!this.proveedorSeleccionado && !!this.lenguajeOrigen &&
+      !!this.lenguajeDestino && !!this.codigoEntrada.trim() &&
+      this.lenguajeOrigen !== this.lenguajeDestino;
   }
 
-  swapLanguages(): void {
-    const temp = this.sourceLang;
-    this.sourceLang = this.targetLang;
-    this.targetLang = temp;
-    if (this.outputCode) {
-      const tempCode = this.inputCode;
-      this.inputCode = this.outputCode;
-      this.outputCode = tempCode;
-    }
+  traducir(): void {
+    if (!this.puedeTraducir()) return;
+    this.traduciendo = true;
+    this.mensajeError = '';
+    this.codigoSalida = '';
+
+    const peticion = {
+      lenguajeRecibido: this.lenguajeOrigen,
+      lenguajeATraducir: this.lenguajeDestino,
+      proveedorIA: this.proveedorSeleccionado,
+      codigoRecibido: this.codigoEntrada,
+      clienteId: this.authService.obtenerClienteId()
+    };
+
+    this.codigoService.traducirConProveedor(peticion as any).subscribe({
+      next: (resultado) => {
+        if (resultado.inteligenciasUsadas && resultado.inteligenciasUsadas.length > 0) {
+          const primera = resultado.inteligenciasUsadas[0];
+          if (primera.codigoRecibido && primera.codigoRecibido.startsWith('ERROR')) {
+            this.mensajeError = 'Error de la IA: ' + primera.codigoRecibido;
+            this.traduciendo = false;
+            this.cdr.detectChanges();
+            return;
+          }
+          this.codigoSalida = primera.codigoRecibido || '';
+        } else {
+          this.codigoSalida = resultado.codigoTraducido || '';
+        }
+        this.traduciendo = false;
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.mensajeError = 'Error al traducir.';
+        this.traduciendo = false;
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  copiarSalida(): void {
+    if (!this.codigoSalida) return;
+    navigator.clipboard.writeText(this.codigoSalida).then(() => {
+      this.copiado = true;
+      this.cdr.detectChanges();
+      setTimeout(() => { this.copiado = false; this.cdr.detectChanges(); }, 2000);
+    });
+  }
+
+  limpiar(): void {
+    this.codigoEntrada = '';
+    this.codigoSalida = '';
+    this.mensajeError = '';
+  }
+
+  intercambiarLenguajes(): void {
+    const temp = this.lenguajeOrigen;
+    this.lenguajeOrigen = this.lenguajeDestino;
+    this.lenguajeDestino = temp;
   }
 }

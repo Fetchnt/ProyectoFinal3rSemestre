@@ -1,10 +1,10 @@
-// src/app/runcode/runcode.ts
-import { Component } from '@angular/core';
+import { Component, ChangeDetectorRef } from '@angular/core';
+import { CodigoService } from '../services/codigo.service';
+import { AuthService } from '../services/auth.service';
 
-interface OutputLine {
-  type: 'info' | 'output' | 'error' | 'system';
-  text: string;
-  timestamp: string;
+interface LineaConsola {
+  tipo: 'info' | 'salida' | 'error' | 'sistema';
+  texto: string;
 }
 
 @Component({
@@ -15,96 +15,65 @@ interface OutputLine {
 })
 export class Runcode {
 
-  languages = [
-    { id: 'python', name: 'Python 3.11', icon: '🐍' },
-    { id: 'javascript', name: 'JavaScript (Node 20)', icon: '⚡' },
-    { id: 'typescript', name: 'TypeScript 5', icon: '📘' },
-    { id: 'java', name: 'Java 21', icon: '☕' },
-    { id: 'cpp', name: 'C++ 17', icon: '⚙' },
-    { id: 'go', name: 'Go 1.22', icon: '🔵' },
-    { id: 'rust', name: 'Rust 1.78', icon: '🦀' },
-    { id: 'php', name: 'PHP 8.3', icon: '🐘' },
-    { id: 'ruby', name: 'Ruby 3.3', icon: '💎' }
-  ];
+  lenguajeSeleccionado = 'python';
+  codigoEntrada = '';
+  lineasConsola: LineaConsola[] = [];
+  ejecutando = false;
 
-  selectedLang = 'python';
-  inputCode = '';
-  outputLines: OutputLine[] = [];
-  isRunning = false;
-  runCount = 0;
-  stdinInput = '';
-  showStdin = false;
+  constructor(
+    private codigoService: CodigoService,
+    private authService: AuthService,
+    private cdr: ChangeDetectorRef
+  ) {}
 
-  get currentLang() {
-    return this.languages.find(l => l.id === this.selectedLang);
-  }
+  ejecutarCodigo(): void {
+    if (!this.codigoEntrada.trim() || this.ejecutando) return;
+    this.ejecutando = true;
 
-  private getTimestamp(): string {
-    return new Date().toLocaleTimeString('es-CO', { hour12: false });
-  }
+    this.lineasConsola.push({ tipo: 'sistema', texto: `▶ Ejecutando en ${this.lenguajeSeleccionado}...` });
 
-  runCode(): void {
-    if (!this.inputCode.trim() || this.isRunning) return;
+    const peticion = {
+      codigoTraducido: this.codigoEntrada,
+      lenguajeATraducir: this.lenguajeSeleccionado,
+      codigoRecibido: this.codigoEntrada,
+      lenguajeRecibido: this.lenguajeSeleccionado,
+      proveedorIA: '',
+      clienteId: this.authService.obtenerClienteId()
+    };
 
-    this.isRunning = true;
-    this.runCount++;
-
-    const runId = this.runCount;
-    const lang = this.currentLang;
-
-    this.outputLines.push({
-      type: 'system',
-      text: `▶ Ejecutando ${lang?.name} — Run #${runId} — ${this.getTimestamp()}`,
-      timestamp: this.getTimestamp()
+    this.codigoService.ejecutarCodigo(peticion as any).subscribe({
+      next: (resultado) => {
+        this.lineasConsola.push({ tipo: 'salida', texto: resultado });
+        this.ejecutando = false;
+        this.cdr.detectChanges();
+        this.desplazarAbajo();
+      },
+      error: () => {
+        this.lineasConsola.push({ tipo: 'error', texto: 'Error al ejecutar el código.' });
+        this.ejecutando = false;
+        this.cdr.detectChanges();
+      }
     });
+  }
 
-    // Simulate execution
+  limpiarConsola(): void {
+    this.lineasConsola = [];
+  }
+
+  private desplazarAbajo(): void {
     setTimeout(() => {
-      this.outputLines.push({
-        type: 'output',
-        text: this.getMockOutput(),
-        timestamp: this.getTimestamp()
-      });
-
-      this.outputLines.push({
-        type: 'info',
-        text: `✓ Proceso terminado en ${(Math.random() * 0.8 + 0.1).toFixed(3)}s — Código de salida: 0`,
-        timestamp: this.getTimestamp()
-      });
-
-      this.isRunning = false;
-      this.scrollToBottom();
-    }, 1200);
-  }
-
-  private getMockOutput(): string {
-    return `[Conecta tu backend de ejecución para ver resultados reales]\nCódigo recibido: ${this.inputCode.split('\n').length} líneas en ${this.selectedLang}`;
-  }
-
-  clearOutput(): void {
-    this.outputLines = [];
-    this.runCount = 0;
-  }
-
-  copyOutput(): void {
-    const text = this.outputLines.map(l => l.text).join('\n');
-    navigator.clipboard.writeText(text);
-  }
-
-  private scrollToBottom(): void {
-    setTimeout(() => {
-      const terminal = document.querySelector('.terminal-output');
-      if (terminal) terminal.scrollTop = terminal.scrollHeight;
+      const consola = document.querySelector('.terminal-output');
+      if (consola) consola.scrollTop = consola.scrollHeight;
     }, 50);
   }
 
-  getLineClass(type: string): string {
-    const map: Record<string, string> = {
-      system: 'line-system',
-      output: 'line-output',
+  obtenerClaseLinea(tipo: string): string {
+    const clases: Record<string, string> = {
+      sistema: 'line-system',
+      salida: 'line-output',
       error: 'line-error',
       info: 'line-info'
     };
-    return map[type] || '';
+    return clases[tipo] || '';
   }
 }

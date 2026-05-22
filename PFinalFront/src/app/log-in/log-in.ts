@@ -1,7 +1,7 @@
-// src/app/log-in/log-in.ts
 import { Component } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
+import { AuthService } from '../services/auth.service';
 
 @Component({
   standalone: false,
@@ -11,38 +11,37 @@ import { Router } from '@angular/router';
 })
 export class LogIn {
 
-  formData = {
-    nombre: '',
-    apellido: '',
-    username: '',
-    correo: '',
-    password: ''
-  };
+  formulario = { usuario: '', contrasenia: '' };
+  mostrarContrasenia = false;
+  cargando = false;
+  mensajeError = '';
+  mensajeExito = '';
 
-  showPassword = false;
-  isLoading = false;
-  errorMessage = '';
-  successMessage = '';
+  constructor(private router: Router, private authService: AuthService) {}
 
-  constructor(private router: Router) {}
-
-  onSubmit(form: NgForm): void {
+  enviarFormulario(form: NgForm): void {
     if (form.invalid) {
-      this.errorMessage = 'Por favor completa todos los campos requeridos.';
+      this.mensajeError = 'Completa todos los campos.';
       return;
     }
+    this.cargando = true;
+    this.mensajeError = '';
 
-    this.isLoading = true;
-    this.errorMessage = '';
-
-    setTimeout(() => {
-      this.isLoading = false;
-      this.successMessage = '¡Acceso concedido!';
-      setTimeout(() => this.router.navigate(['/traductor']), 800);
-    }, 1000);
+    this.authService.iniciarSesion(this.formulario.usuario, this.formulario.contrasenia).subscribe({
+      next: (token) => {
+        this.authService.guardarToken(token);
+        const id = this.authService.obtenerIdDesdeToken();
+        this.authService.guardarClienteId(id);
+        this.authService.guardarToken(token);
+        this.mensajeExito = '¡Acceso concedido!';
+        this.cargando = false;
+        setTimeout(() => this.router.navigate(['/traductor']), 800);
+      },
+      error: () => {
+        this.mensajeError = 'Usuario o contraseña incorrectos.';
+        this.cargando = false;
+      }
+    });
   }
 
-  togglePassword(): void {
-    this.showPassword = !this.showPassword;
-  }
 }
